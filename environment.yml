@@ -1,0 +1,12 @@
+name: dataforger
+channels:
+  - conda-forge
+dependencies:
+  - pyspark >= 2.4
+  - python = 3.8
+  - pyspark-stubs
+  - click >= 7.1
+  - flit
+  - colorama
+  - pydata-sphinx-theme
+  - sphinx
