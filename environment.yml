@@ -8,5 +8,6 @@ dependencies:
   - click >= 7.1
   - flit
   - colorama
+  - tornado
   - pydata-sphinx-theme
   - sphinx

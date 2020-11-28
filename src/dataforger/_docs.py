@@ -1,6 +1,11 @@
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Type, Tuple, Iterable, List, Dict, Any
+import webbrowser
+import tornado
+from tornado import web, ioloop
+
 from dataforger import FeatureGroup, SourceTable, Feature, Field
 from dataforger._inspect import find_source_tables_on_path, find_feature_groups_on_path
 from pyspark.sql.types import DataType
@@ -14,6 +19,9 @@ DIR_SPHINX_BASE = Path(os.path.dirname(os.path.abspath(__file__))).joinpath(
 TABLE_TEMPLATE = DIR_SPHINX_BASE.joinpath("data-sources/table-template.rst")
 FG_TEMPLATE = DIR_SPHINX_BASE.joinpath("features/feature-group-template.rst")
 
+PORT = 8080
+HOST = "127.0.0.1"
+
 
 def create_sphinx_html(source_dir: Path, target_dir: Path):
     source_tables = find_source_tables_on_path(basepath=source_dir)
@@ -26,9 +34,11 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     ds_target_folder = target_dir.joinpath("data-sources")
     fg_target_folder = target_dir.joinpath("features")
 
-    assert not target_dir.exists(), "rst output folder should not exist already!"
+    assert (
+        not target_dir.exists() or os.listdir(target_dir) == []
+    ), "rst output folder should not exist already!"
 
-    os.makedirs(str(target_dir))
+    os.makedirs(str(target_dir), exist_ok=True)
     os.makedirs(str(ds_target_folder))
 
     for st, st_rst in source_table_rsts.items():
@@ -63,6 +73,28 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     )
 
 
+def serve_sphinx_html(webroot: Path) -> None:
+    app = web.Application(
+        [
+            (
+                r"/(.*)",
+                tornado.web.StaticFileHandler,
+                {"path": str(webroot), "default_filename": "index.html"},
+            )
+        ]
+    )
+    app.listen(port=PORT, address=HOST)
+
+    print("\nPress 'Ctrl+C' to stop")
+    webbrowser.open(url=f"http://{HOST}:{PORT}")
+
+    try:
+        ioloop.IOLoop.current().start()
+    except KeyboardInterrupt:
+        ioloop.IOLoop.current().stop()
+        print("Feature Library server stopped.")
+
+
 def feature_group_to_rst(fg_in: Type[FeatureGroup]) -> str:
     def _make_data_sources_section(data_sources: Tuple[Type[SourceTable], ...]) -> str:
         ds_template = ":doc:`{name} <../data-sources/{name}>`"
@@ -95,7 +127,7 @@ Feature Definition
                     description=f.__doc__,
                     agg_level="Not defined",
                     parameters="Not defined",
-                    feature_code=inspect.getsource(f.compute).lstrip()
+                    feature_code=inspect.getsource(f.compute).lstrip(),
                 )
                 for f in features
             ]
@@ -173,11 +205,15 @@ def _field_type_to_string(in_type: Any) -> str:
 
 
 if __name__ == "__main__":
-    create_sphinx_html(
-        source_dir=Path(
-            "/Users/schneiderjoerg/"
-            "Projekte/dataforger/test/test/"
-            "test_feature_library"
-        ),
-        target_dir=Path("/Users/schneiderjoerg/Projekte/dataforger/test-rst"),
-    )
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_dir = Path(temp_dir)
+        create_sphinx_html(
+            source_dir=Path(
+                "/Users/schneiderjoerg/"
+                "Projekte/dataforger/test/test/"
+                "test_feature_library"
+            ),
+            target_dir=temp_dir,
+        )
+        serve_sphinx_html(temp_dir.joinpath("html"))
+
