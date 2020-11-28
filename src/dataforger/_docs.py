@@ -116,7 +116,6 @@ Available Parameters
 Feature Definition
     .. code-block:: python
        :linenos:
-       :caption:
        
        {feature_code}
 """

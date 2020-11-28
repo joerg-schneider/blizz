@@ -63,11 +63,11 @@ html_sidebars = {
 # a list of builtin themes.
 #
 html_theme = "pydata_sphinx_theme"
-html_logo = "_static/pandas.svg"
+html_logo = "_static/forger.svg"
 
 html_theme_options = {
     "external_links": [
-        {"url": "https://pandas.pydata.org/pandas-docs/stable/", "name": "Pandas Docs"}
+        # {"url": "https://pandas.pydata.org/pandas-docs/stable/", "name": "Pandas Docs"}
     ],
     "github_url": "https://github.com/pandas-dev/pydata-sphinx-theme",
     # "twitter_url": "https://twitter.com/pandas_dev",
