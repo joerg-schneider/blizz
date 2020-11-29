@@ -19,6 +19,14 @@ def path_test_feature_library() -> Path:
     return Path(os.path.dirname(test_feature_library.__file__))
 
 
+@pytest.fixture
+def path_test_feature_lists() -> Path:
+    return Path(os.path.dirname(__file__)).joinpath("test_feature_lists")
+
+@pytest.fixture
+def path_tmp_folder() -> Path:
+    return Path(os.path.dirname(__file__)).joinpath(os.pardir).joinpath("temp")
+
 def get_or_create_spark_session() -> SparkSession:
     """
     Create and/or retrieve an Apache Spark Session.

@@ -1,0 +1,18 @@
+feature-groups:
+  -   name: MyFeatureGroup
+#      pre-filter: ""
+#      post-filter: ""
+
+      features:
+      - name: MyFeature3
+      - name: MyFeature4
+        parameters:
+          - name-suffix: _times_{factor}
+            grid:
+              factor: [0,1]
+
+      passthrough:
+        - RAD
+
+output:
+  format: csv

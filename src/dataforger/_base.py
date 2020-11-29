@@ -76,9 +76,9 @@ class FeatureGroup(ABC):
     @classmethod
     def compute(
         cls,
-        features: Optional[Iterable[Feature]] = None,
+        features: Optional[Iterable[Type[Feature]]] = None,
         parameters: Optional[Dict[str, Iterable[FeatureParameter]]] = None,
-        keep: Iterable[Field] = None,
+        keep: Iterable[Union[Field, str]] = None,
     ) -> DataFrame:
 
         if parameters is None:
@@ -89,7 +89,7 @@ class FeatureGroup(ABC):
         if keep is None:
             keep = set()
         else:
-            keep = {f.name for f in keep}
+            keep = {str(f) for f in keep}
 
         if features is None:
             features = cls.get_features()
@@ -178,6 +178,13 @@ class FeatureGroup(ABC):
             for cls_attribute in cls.__dict__.values()
             if inspect.isclass(cls_attribute) and issubclass(cls_attribute, Feature)
         ]
+
+    @classmethod
+    def get_feature(cls, name: str) -> Type[Feature]:
+        for f in cls.get_features():
+            if f.name() == name:
+                return f
+        raise AttributeError(f"{cls.name()} does not have feature '{name}'")
 
     @classmethod
     def contained_in(cls, collection: Iterable[Type["FeatureGroup"]]) -> bool:
