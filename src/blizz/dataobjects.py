@@ -1,4 +1,3 @@
-""" The dataobjects module defines helpful Table & Column classes. """
 from typing import *
 
 from pyspark.sql import DataFrame
@@ -29,63 +28,43 @@ class Relation:
     def mock(cls) -> DataFrame:
         pass
 
-    class Columns:
-        """ Class to be overridden by subclasses of Table. In subclass,
-            define columns using all-uppercase variables of type
-            Column().
-            E.g.:
-
-            class MyTable(Table):
-                class Columns:
-                    COL_1 = Column("this_is_the_first_column_name")
-                    COL_2 = Column("the second")
-
-            ...
-        """
-
-        pass
-
     @classmethod
+    # todo: evaluate datatype Field() here as opposed to str
     def get_defined_types(cls) -> Dict[str, DataType]:
         """
-        :return: Dictionary where a column name (str) maps to the pandas/np datatype
+        :return: Dictionary where a Field maps to the pandas/np/pySpark datatype
         """
-        list_of_all_cols = [getattr(cls.Columns, d) for d in dir(cls.Columns)]
         col_name_to_type = {
-            col.name: col.datatype
-            for col in list_of_all_cols
-            if isinstance(col, Field) and col.datatype is not None
+            f.name: f.datatype
+            for f in cls.get_fields()
+            if isinstance(f, Field) and f.datatype is not None
         }
 
         return col_name_to_type
 
     @classmethod
     def get_defined_key_fields(cls) -> List["Field"]:
-        return [c for c in cls.get_columns() if c.key]
+        return [c for c in cls.get_fields() if c.key]
 
     @classmethod
-    def get_defined_key_column_names(cls) -> List[str]:
-        return [c.name for c in cls.get_defined_key_fields()]
+    def get_defined_key_field_names(cls) -> List[str]:
+        return [f.name for f in cls.get_defined_key_fields()]
 
     @classmethod
-    def list_column_names(cls) -> List[str]:
-        """ A handy function that yields all defined column names as an iterable. """
-        return [c.name for c in cls.get_columns()]
+    def get_field_names(cls) -> List[str]:
+        return [f.name for f in cls.get_fields()]
 
     @classmethod
-    def get_columns(cls) -> List["Field"]:
-        """ A handy function that yields all defined columns as an iterable. """
+    def get_fields(cls) -> List["Field"]:
         return [getattr(cls, d) for d in dir(cls) if isinstance(d, Field)]
 
     @classmethod
-    def list_column_names_transformed_using_dict(
+    def list_field_names_transformed_using_dict(
         cls, transform_dict: dict
     ) -> Iterable[str]:
-        """ A function to convert the Schema columns names using a dict.
-        This is handy when reading selected columns using parquet """
-        list_of_columns_names = cls.list_column_names()
+
         out_list = []
-        for name in list_of_columns_names:
+        for name in cls.get_field_names():
             if transform_dict.get(name) is not None:
                 out_list = out_list + [transform_dict.get(name)]
             else:
@@ -94,31 +73,22 @@ class Relation:
         return out_list
 
     @classmethod
-    def get_default(cls, column_name: str) -> Optional[Any]:
-        """ Yield the default value for a column as defined in the Schema. """
-        for col in cls.get_columns():
-            if col.name == column_name:
+    def get_default(cls, field: Union[str, "Field"]) -> Optional[Any]:
+        """ Get the default value for a field as defined in the Relation. """
+        for col in cls.get_fields():
+            if col.name == field:
                 return col.default
 
-        raise ValueError(f"Column name '{column_name}' not defined in Schema.")
-
-    # todo: do this in datachecks.py!
-    @classmethod
-    def verify_schema(cls, data: DataFrame):
-        for t_column in cls.get_columns():
-            if t_column.name not in data.columns:
-                raise ValueError(
-                    f"Column '{t_column.name}' is not part of passed dataframe."
-                )
+        raise ValueError(f"Field '{field}' not defined for Relation '{cls.name()}'.")
 
     @classmethod
     def equals(cls, other: Type["Relation"]) -> bool:
         # 1. same number of fields
-        if len(cls.get_columns()) != len(other.get_columns()):
+        if len(cls.get_fields()) != len(other.get_fields()):
             return False
         else:
-            this_fields = {f.name: f for f in cls.get_columns()}
-            other_fields = {f.name: f for f in other.get_columns()}
+            this_fields = {f.name: f for f in cls.get_fields()}
+            other_fields = {f.name: f for f in other.get_fields()}
 
             for field_name, field in this_fields.items():
                 if field_name not in other_fields:
@@ -145,7 +115,7 @@ class Field(str):
     key: bool
 
     def __new__(
-        self,
+        cls,
         name: str,
         datatype: Type[DataType] = None,
         default: Any = None,
@@ -183,7 +153,7 @@ class Field(str):
         return Field_(name)
 
 
-class ColumnRenames:
+class FieldRenames:
     """ Holding the transformation of input schema to used schema"""
 
     def __init__(self, input_to_used: dict):
