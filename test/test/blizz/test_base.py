@@ -60,9 +60,7 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
                 if parameters is None:
                     raise ValueError(f"{cls.name()} requires parameters")
 
-                return (
-                    F.col(Boston.AGE.name) * parameters[cls.Parameters.FACTOR]
-                )
+                return F.col(Boston.AGE.name) * parameters[cls.Parameters.FACTOR]
 
         class AvgTaxPerRAD(Feature):
             """ Docstring of Feature 5. """
