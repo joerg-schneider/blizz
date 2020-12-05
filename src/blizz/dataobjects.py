@@ -24,7 +24,6 @@ class Relation:
         pass
 
     @classmethod
-    @abstractmethod
     def mock(cls) -> DataFrame:
         pass
 
@@ -56,7 +55,11 @@ class Relation:
 
     @classmethod
     def get_fields(cls) -> List["Field"]:
-        return [getattr(cls, d) for d in dir(cls) if isinstance(d, Field)]
+        return [
+            getattr(cls, d)
+            for d in dir(cls)
+            if getattr(cls, d).__class__.__name__ == "Field_"
+        ]
 
     @classmethod
     def list_field_names_transformed_using_dict(

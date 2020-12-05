@@ -96,4 +96,4 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
         ).show()
     )
     # print(MyFeatureGroup.compute().show())
-    # print(MyFeatureGroup.compute(keep=Boston.get_columns()).show())
+    # print(MyFeatureGroup.compute(keep=Boston.get_fields()).show())
