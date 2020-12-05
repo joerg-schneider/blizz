@@ -49,7 +49,7 @@ Documentation = "https://github.gamma.bcg.com"
 Repository = "https://github.gamma.bcg.com"
 
 [tool.flit.scripts]
-dfr = "blizz._cli:main"
+blizz = "blizz._cli:main"
 
 [tool.black]
 # quiet = "True"
