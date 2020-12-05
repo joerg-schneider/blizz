@@ -6,7 +6,7 @@ import webbrowser
 import tornado
 from tornado import web, ioloop
 
-from blizz import FeatureGroup, SourceTable, Feature, Field
+from blizz import FeatureGroup, Relation, Feature, Field
 from blizz._inspect import find_source_tables_on_path, find_feature_groups_on_path
 from pyspark.sql.types import DataType
 import inspect
@@ -25,7 +25,7 @@ HOST = "127.0.0.1"
 
 def create_sphinx_html(source_dir: Path, target_dir: Path):
     source_tables = find_source_tables_on_path(basepath=source_dir)
-    source_table_rsts: Dict[Type[SourceTable], str] = {
+    source_table_rsts: Dict[Type[Relation], str] = {
         st: source_table_to_rst(st_in=st) for st in source_tables
     }
     feature_groups = find_feature_groups_on_path(basepath=source_dir)
@@ -96,7 +96,7 @@ def serve_sphinx_html(webroot: Path) -> None:
 
 
 def feature_group_to_rst(fg_in: Type[FeatureGroup]) -> str:
-    def _make_data_sources_section(data_sources: Tuple[Type[SourceTable], ...]) -> str:
+    def _make_data_sources_section(data_sources: Tuple[Type[Relation], ...]) -> str:
         ds_template = ":doc:`{name} <../data-sources/{name}>`"
         return "\n\n".join([ds_template.format(name=ds.name()) for ds in data_sources])
 
@@ -144,7 +144,7 @@ Feature Definition
         )
 
 
-def source_table_to_rst(st_in: Type[SourceTable]) -> str:
+def source_table_to_rst(st_in: Type[Relation]) -> str:
     def _make_pk_section(pk_fields: List[Field]) -> str:
         if len(pk_fields) == 0:
             return "Unknown – no fields have been flagged as keys yet."

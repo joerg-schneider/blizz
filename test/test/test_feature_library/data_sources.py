@@ -1,11 +1,11 @@
 from pyspark.sql import DataFrame
 from pyspark.sql.types import DoubleType
 
-from blizz.dataobjects import SourceTable, Field
+from blizz.dataobjects import Relation, Field
 from test.conftest import path_to_test_data, get_or_create_spark_session
 
 
-class Boston(SourceTable):
+class Boston(Relation):
     """
     This is the example data source boston for testing.
     """

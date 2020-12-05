@@ -6,7 +6,7 @@ from pyspark.sql.types import *
 from abc import abstractmethod
 
 
-class SourceTable:
+class Relation:
     """ Base class to be inherited by all table definitions in the project."""
 
     # todo: improve docstrings and consistency in naming, e.g. fields vs column!!
@@ -112,7 +112,7 @@ class SourceTable:
                 )
 
     @classmethod
-    def equals(cls, other: Type["SourceTable"]) -> bool:
+    def equals(cls, other: Type["Relation"]) -> bool:
         # 1. same number of fields
         if len(cls.get_columns()) != len(other.get_columns()):
             return False
@@ -129,7 +129,7 @@ class SourceTable:
         return True
 
     @classmethod
-    def contained_in(cls, collection: Iterable[Type["SourceTable"]]) -> bool:
+    def contained_in(cls, collection: Iterable[Type["Relation"]]) -> bool:
         for t in collection:
             if cls.equals(t):
                 return True

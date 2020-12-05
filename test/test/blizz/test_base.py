@@ -5,7 +5,7 @@ from blizz import Feature, FeatureGroup, FeatureParameter
 from pyspark.sql import DataFrame, Column, SparkSession
 import pyspark.sql.functions as F
 
-from blizz.dataobjects import SourceTable, Field, DoubleType
+from blizz.dataobjects import Relation, Field, DoubleType
 
 
 def test_feature_group(spark_session: SparkSession, path_boston_test: Path):

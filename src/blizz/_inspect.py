@@ -1,16 +1,16 @@
 from pathlib import Path
-from blizz import FeatureGroup, SourceTable
+from blizz import FeatureGroup, Relation
 from ._helpers import all_python_modules_in_path
 from typing import Iterable, Type
 import inspect
 
 
-def find_source_tables_on_path(basepath: Path) -> Iterable[Type[SourceTable]]:
+def find_source_tables_on_path(basepath: Path) -> Iterable[Type[Relation]]:
     for py_module in all_python_modules_in_path(basepath):
         for (member_name, member_value) in inspect.getmembers(py_module):
             if (
                 inspect.isclass(member_value)
-                and issubclass(member_value, SourceTable)
+                and issubclass(member_value, Relation)
                 and _member_defined_in_module(py_module, member_value)
             ):
                 yield member_value

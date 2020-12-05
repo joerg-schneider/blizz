@@ -7,6 +7,6 @@ from ._base import (
     FeatureParameter,
     AggregatedFeatureGroup,
 )
-from .dataobjects import SourceTable, Field
+from .dataobjects import Relation, Field
 
 __version__ = "0.1.0"
