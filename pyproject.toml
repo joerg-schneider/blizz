@@ -17,7 +17,11 @@ requires = [
     "pyyaml >= 5.0",
     "pyspark >= 2.4",
     "click >= 7.1",
-    "colorama"
+    "colorama",
+    "tornado",
+    "pydata-sphinx-theme",
+    "sphinx",
+    "schema",
 ]
 
 requires-python = ">=3.6,<4"
@@ -31,9 +35,7 @@ testing = [
     "isort == 5.5.*",
 ]
 docs = [
-    "sphinx == 3.2.*",
     "sphinx-autodoc-typehints == 1.11.*",
-    "pydata-sphinx-theme == 0.4.*",
     "nbsphinx == 0.7.*",
     "jupyter >= 1.0",
     "docutils",
