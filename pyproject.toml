@@ -6,12 +6,13 @@ build-backend = "flit_core.buildapi"
 exclude = [".idea", "tmp", "dist", ".tox", ".pytest_cache"]
 
 [tool.flit.metadata]
-module = "dataforger"
+module = "blizz"
 author = ""
 home-page = "https://github.gamma.bcg.com"
 description-file = "README.rst"
-dist-name = "dataforger"
+dist-name = "blizz"
 
+# todo: remove Pandas & PySpark from deps; user to install themselves
 requires = [
     "pandas >= 0.24,<1.2",
     "pyyaml >= 5.0",
@@ -48,7 +49,7 @@ Documentation = "https://github.gamma.bcg.com"
 Repository = "https://github.gamma.bcg.com"
 
 [tool.flit.scripts]
-dfr = "dataforger._cli:main"
+dfr = "blizz._cli:main"
 
 [tool.black]
 # quiet = "True"

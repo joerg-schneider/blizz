@@ -1,6 +1,6 @@
 from pathlib import Path
-from dataforger._run_config import read_config, validate_schema, run_config_from_file
-from dataforger._runtime import build_features, write_results
+from blizz._run_config import read_config, validate_schema, run_config_from_file
+from blizz._runtime import build_features, write_results
 
 
 def test_read_config(path_test_feature_lists: Path) -> None:

@@ -6,8 +6,8 @@ import webbrowser
 import tornado
 from tornado import web, ioloop
 
-from dataforger import FeatureGroup, SourceTable, Feature, Field
-from dataforger._inspect import find_source_tables_on_path, find_feature_groups_on_path
+from blizz import FeatureGroup, SourceTable, Feature, Field
+from blizz._inspect import find_source_tables_on_path, find_feature_groups_on_path
 from pyspark.sql.types import DataType
 import inspect
 import os
@@ -69,7 +69,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
 
     os.chdir(str(target_dir))
     subprocess.run(
-        ["/Users/schneiderjoerg/conda-envs/dataforger/bin/sphinx-build", ".", "html"]
+        ["/Users/schneiderjoerg/conda-envs/blizz/bin/sphinx-build", ".", "html"]
     )
 
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
         create_sphinx_html(
             source_dir=Path(
                 "/Users/schneiderjoerg/"
-                "Projekte/dataforger/test/test/"
+                "Projekte/blizz/test/test/"
                 "test_feature_library"
             ),
             target_dir=temp_dir,

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.types import DoubleType
-from dataforger.dataobjects import SourceTable, Field
+from blizz.dataobjects import SourceTable, Field
 
 
 def test_table(path_boston_test: Path, spark_session: SparkSession) -> None:

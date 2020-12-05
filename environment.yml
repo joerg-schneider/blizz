@@ -1,9 +1,10 @@
-name: dataforger
+name: blizz-dev
 channels:
   - conda-forge
 dependencies:
   - pyspark >= 2.4
   - python = 3.8
+  - pytest
   - pyspark-stubs
   - click >= 7.1
   - flit

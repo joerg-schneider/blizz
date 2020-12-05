@@ -1,5 +1,5 @@
 from pathlib import Path
-from dataforger import FeatureGroup, SourceTable
+from blizz import FeatureGroup, SourceTable
 from ._helpers import all_python_modules_in_path
 from typing import Iterable, Type
 import inspect

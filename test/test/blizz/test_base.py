@@ -1,11 +1,11 @@
 from pathlib import Path
 from typing import Optional, Dict, Any, Iterable, Union, Tuple
 from test.test_feature_library.data_sources import *
-from dataforger import Feature, FeatureGroup, FeatureParameter
+from blizz import Feature, FeatureGroup, FeatureParameter
 from pyspark.sql import DataFrame, Column, SparkSession
 import pyspark.sql.functions as F
 
-from dataforger.dataobjects import SourceTable, Field, DoubleType
+from blizz.dataobjects import SourceTable, Field, DoubleType
 
 
 def test_feature_group(spark_session: SparkSession, path_boston_test: Path):

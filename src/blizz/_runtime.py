@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, Type
 from pyspark.sql import DataFrame
-from dataforger._run_config import RunConfig, FeatureGroup, OutputFormat
+from blizz._run_config import RunConfig, FeatureGroup, OutputFormat
 import os
 
 

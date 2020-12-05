@@ -30,6 +30,11 @@ def path_tmp_folder() -> Path:
     return Path(os.path.dirname(__file__)).joinpath(os.pardir).joinpath("temp")
 
 
+@pytest.fixture(scope="session")
+def path_conf_folder() -> Path:
+    return Path(os.path.dirname(__file__)).joinpath(os.pardir).joinpath("conf")
+
+
 def get_or_create_spark_session() -> SparkSession:
     """
     Create and/or retrieve an Apache Spark Session.
@@ -65,3 +70,8 @@ def clean_tmp_folder(path_tmp_folder: Path,) -> None:
     _clean_tmp()
     yield
     _clean_tmp()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_spark_conf_dir(path_conf_folder: Path):
+    os.environ["SPARK_CONF_DIR"] = path_conf_folder.as_posix()

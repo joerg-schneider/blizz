@@ -2,9 +2,9 @@ import io
 import tempfile
 from pathlib import Path
 
-from dataforger._docs import serve_sphinx_html, create_sphinx_html
-from dataforger._runtime import build_features, write_results
-from dataforger._run_config import run_config_from_file
+from blizz._docs import serve_sphinx_html, create_sphinx_html
+from blizz._runtime import build_features, write_results
+from blizz._run_config import run_config_from_file
 import click
 import os
 from colorama import Fore, Back, Style

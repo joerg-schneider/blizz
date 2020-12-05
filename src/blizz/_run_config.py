@@ -1,4 +1,4 @@
-from dataforger._inspect import find_source_tables_on_path, find_feature_groups_on_path
+from blizz._inspect import find_source_tables_on_path, find_feature_groups_on_path
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Any, NamedTuple, List, Type
@@ -6,7 +6,7 @@ import yaml
 from schema import Schema, And, Use, Optional
 
 
-from dataforger import Feature, FeatureGroup, FeatureParameter
+from blizz import Feature, FeatureGroup, FeatureParameter
 
 
 class OutputFormat(Enum):
