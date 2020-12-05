@@ -144,26 +144,51 @@ class SourceTable:
         return False
 
 
-class Field(NamedTuple):
-    """ Defines a table column. """
-
+class Field(str):
+    # todo: add mock callable argument!
     name: str
-    datatype: Type[DataType] = None
-    default: Any = None
-    description: str = None
-    key: bool = False
-    # todo: mock: callable
+    datatype: Type[DataType]
+    default: Any
+    description: str
+    key: bool
 
-    def __repr__(self):
-        return self.name
+    def __new__(
+        self,
+        name: str,
+        datatype: Type[DataType] = None,
+        default: Any = None,
+        description: str = None,
+        key: bool = None,
+    ):
 
-    def __eq__(self, other: "Field") -> bool:
-        return (
-            self.name == other.name
-            and self.datatype == other.datatype
-            and self.default == other.default
-            and self.description == other.description
-        )
+        description_ = description
+        name_ = name
+        default_ = default
+        datatype_ = datatype
+        key_ = key
+
+        class Field_(str):
+            @property
+            def description(self):
+                return description_
+
+            @property
+            def default(self):
+                return default_
+
+            @property
+            def datatype(self):
+                return datatype_
+
+            @property
+            def key(self):
+                return key_
+
+            @property
+            def name(self) -> str:
+                return name_
+
+        return Field_(name)
 
 
 class ColumnRenames:
