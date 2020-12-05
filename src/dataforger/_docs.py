@@ -215,4 +215,3 @@ if __name__ == "__main__":
             target_dir=temp_dir,
         )
         serve_sphinx_html(temp_dir.joinpath("html"))
-
