@@ -26,7 +26,7 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
             def compute(
                 cls, base: DataFrame, parameters: Dict[str, Any] = None
             ) -> Column:
-                return F.expr(f"{Boston.Columns.AGE} + 2")
+                return F.expr(f"{Boston.AGE} + 2")
 
         class MyFeature2(Feature):
             """ Docstring of Feature 2. """
@@ -35,7 +35,7 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
             def compute(
                 cls, base: DataFrame, parameters: Dict[str, Any] = None
             ) -> Column:
-                return F.expr(f"{Boston.Columns.LSTAT} * 0.5")
+                return F.expr(f"{Boston.LSTAT} * 0.5")
 
         class MyFeature3(Feature):
             """ Docstring of Feature 3. """
@@ -44,7 +44,7 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
             def compute(
                 cls, base: DataFrame, parameters: Dict[str, Any] = None
             ) -> Column:
-                return F.col(Boston.Columns.AGE.name) + 1000
+                return F.col(Boston.AGE.name) + 1000
 
         class MyFeature4(Feature):
             """ Docstring of Feature 4. """
@@ -61,20 +61,20 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
                     raise ValueError(f"{cls.name()} requires parameters")
 
                 return (
-                    F.col(Boston.Columns.AGE.name) * parameters[cls.Parameters.FACTOR]
+                    F.col(Boston.AGE.name) * parameters[cls.Parameters.FACTOR]
                 )
 
         class AvgTaxPerRAD(Feature):
             """ Docstring of Feature 5. """
 
-            aggregation_level = Boston.Columns.RAD
+            aggregation_level = Boston.RAD
 
             @classmethod
             def compute(
                 cls, base: DataFrame, parameters: Dict[str, Any] = None
             ) -> DataFrame:
-                data = base.groupby(F.col(Boston.Columns.RAD.name)).agg(
-                    F.round(F.avg(F.col(Boston.Columns.TAX.name)), 1)
+                data = base.groupby(F.col(Boston.RAD.name)).agg(
+                    F.round(F.avg(F.col(Boston.TAX.name)), 1)
                 )
                 return data
 
@@ -82,7 +82,7 @@ def test_feature_group(spark_session: SparkSession, path_boston_test: Path):
 
     print(
         MyFeatureGroup.compute(
-            keep=(Boston.Columns.RAD,),
+            keep=(Boston.RAD,),
             parameters={
                 MyFeatureGroup.MyFeature4.name(): (
                     FeatureParameter(

@@ -13,21 +13,20 @@ def test_table(path_boston_test: Path, spark_session: SparkSession) -> None:
     """
 
     class Boston(SourceTable):
-        class Columns:
-            CRIM = Field(name="CRIM", datatype=DoubleType)
-            ZN = Field(name="ZN", datatype=DoubleType)
-            INDUS = Field(name="INDUS", datatype=DoubleType)
-            CHAS = Field(name="CHAS", datatype=DoubleType)
-            NOX = Field(name="NOX", datatype=DoubleType)
-            RM = Field(name="RM", datatype=DoubleType)
-            AGE = Field(name="AGE", datatype=DoubleType)
-            DIS = Field(name="DIS", datatype=DoubleType)
-            RAD = Field(name="RAD", datatype=DoubleType)
-            TAX = Field(name="TAX", datatype=DoubleType)
-            PTRATIO = Field(name="PTRATIO", datatype=DoubleType)
-            B = Field(name="B", datatype=DoubleType)
-            LSTAT = Field(name="LSTAT", datatype=DoubleType)
-            MEDV = Field(name="MEDV", datatype=DoubleType)
+        CRIM = Field(name="CRIM", datatype=DoubleType)
+        ZN = Field(name="ZN", datatype=DoubleType)
+        INDUS = Field(name="INDUS", datatype=DoubleType)
+        CHAS = Field(name="CHAS", datatype=DoubleType)
+        NOX = Field(name="NOX", datatype=DoubleType)
+        RM = Field(name="RM", datatype=DoubleType)
+        AGE = Field(name="AGE", datatype=DoubleType)
+        DIS = Field(name="DIS", datatype=DoubleType)
+        RAD = Field(name="RAD", datatype=DoubleType)
+        TAX = Field(name="TAX", datatype=DoubleType)
+        PTRATIO = Field(name="PTRATIO", datatype=DoubleType)
+        B = Field(name="B", datatype=DoubleType)
+        LSTAT = Field(name="LSTAT", datatype=DoubleType)
+        MEDV = Field(name="MEDV", datatype=DoubleType)
 
         @classmethod
         def load(cls) -> DataFrame:
