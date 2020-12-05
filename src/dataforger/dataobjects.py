@@ -70,20 +70,12 @@ class SourceTable:
     @classmethod
     def list_column_names(cls) -> List[str]:
         """ A handy function that yields all defined column names as an iterable. """
-        return [
-            getattr(cls.Columns, d).name
-            for d in dir(cls.Columns)
-            if str(d).upper() == str(d)
-        ]
+        return [c.name for c in cls.get_columns()]
 
     @classmethod
     def get_columns(cls) -> List["Field"]:
         """ A handy function that yields all defined columns as an iterable. """
-        return [
-            getattr(cls.Columns, d)
-            for d in dir(cls.Columns)
-            if str(d).upper() == str(d)
-        ]
+        return [getattr(cls, d) for d in dir(cls) if isinstance(d, Field)]
 
     @classmethod
     def list_column_names_transformed_using_dict(
