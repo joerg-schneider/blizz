@@ -32,7 +32,7 @@ def camel_case_to_snake(name: str) -> str:
 
 
 def safe_name(name: str) -> str:
-    return re.sub(r"[.]", "_", name)
+    return re.sub(r"[.\s-]", "_", name)
 
 
 def recurse_dir_tree(base: Path) -> Iterable[Path]:

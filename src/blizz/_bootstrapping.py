@@ -4,6 +4,8 @@ from pathlib import Path
 import pandas
 import pyspark
 
+from ._helpers import safe_name
+
 TEMPLATE_FIELD = '{field_name_var} = Field(name="{field_name}")'
 TEMPLATE_FIELD_TYPED = (
     '    {field_name_var} = Field(name="{field_name}", datatype={data_type})'
@@ -40,13 +42,13 @@ def data_source_definition(
 ) -> str:
     if field_types is None:
         fields = [
-            TEMPLATE_FIELD.format(field_name_var=fn.upper(), field_name=fn)
+            TEMPLATE_FIELD.format(field_name_var=safe_name(fn.upper()), field_name=fn)
             for fn in field_names
         ]
     else:
         fields = [
             TEMPLATE_FIELD_TYPED.format(
-                field_name_var=fn.upper(), field_name=fn, data_type=ft
+                field_name_var=safe_name(fn.upper()), field_name=fn, data_type=ft
             )
             for fn, ft in zip(field_names, field_types)
         ]
