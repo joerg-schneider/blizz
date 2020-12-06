@@ -5,7 +5,7 @@ import os
 import logging
 from ._helpers import setup_logger
 
-from ._base import (
+from ._feature_library import (
     Feature,
     FeatureGroup,
     FeatureParameter,
