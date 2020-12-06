@@ -176,8 +176,8 @@ def relation_to_rst(st_in: Type[Relation]) -> str:
                 field_row_template.format(
                     name=p.name,
                     type=_field_type_to_string(p.datatype),
-                    default=p.default,
-                    description=p.description,
+                    default=p.default if p.default is not None else "",
+                    description=p.description if p.description is not None else "",
                 )
                 for p in fields
             ]
