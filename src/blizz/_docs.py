@@ -31,7 +31,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     feature_groups = find_feature_groups_on_path(basepath=source_dir)
     feature_rsts = {fg: feature_group_to_rst(fg_in=fg) for fg in feature_groups}
 
-    ds_target_folder = target_dir.joinpath("data-sources")
+    ds_target_folder = target_dir.joinpath("relations")
     fg_target_folder = target_dir.joinpath("features")
 
     assert (
@@ -60,7 +60,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     for file in [
         "conf.py",
         "index.rst",
-        "data-sources/index.rst",
+        "relations/index.rst",
         "features/index.rst",
     ]:
         shutil.copy(
@@ -95,7 +95,7 @@ def serve_sphinx_html(webroot: Path) -> None:
 
 def feature_group_to_rst(fg_in: Type[FeatureGroup]) -> str:
     def _make_data_sources_section(data_sources: Tuple[Type[Relation], ...]) -> str:
-        ds_template = ":doc:`{name} <../data-sources/{name}>`"
+        ds_template = ":doc:`{name} <../relations/{name}>`"
         return "\n\n".join([ds_template.format(name=ds.name()) for ds in data_sources])
 
     def _make_features_section(features: Iterable[Type[Feature]]) -> str:
