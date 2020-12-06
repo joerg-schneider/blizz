@@ -35,7 +35,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     fg_target_folder = target_dir.joinpath("features")
 
     assert (
-        not target_dir.exists() or os.listdir(target_dir) == []
+        not target_dir.exists() or os.listdir(target_dir.as_posix()) == []
     ), "rst output folder should not exist already!"
 
     os.makedirs(str(target_dir), exist_ok=True)
@@ -68,9 +68,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
         )
 
     os.chdir(str(target_dir))
-    subprocess.run(
-        ["sphinx-build", ".", "html"]
-    )
+    subprocess.run(["sphinx-build", ".", "html"])
 
 
 def serve_sphinx_html(webroot: Path) -> None:
