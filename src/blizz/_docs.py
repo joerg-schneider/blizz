@@ -69,7 +69,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
 
     os.chdir(str(target_dir))
     subprocess.run(
-        ["/Users/schneiderjoerg/conda-envs/blizz/bin/sphinx-build", ".", "html"]
+        ["sphinx-build", ".", "html"]
     )
 
 
