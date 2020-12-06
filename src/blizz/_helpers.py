@@ -6,6 +6,7 @@ from pathlib import Path
 import importlib.util
 import importlib
 from typing import Any, Iterable
+import logging
 
 
 def camel_case_to_snake(name: str) -> str:
@@ -60,3 +61,15 @@ def all_python_modules_in_path(basepath: Path) -> Iterable[Any]:
 
 def pandas_dtype_to_spark_type():
     pass
+
+
+def setup_logger(level: int = logging.INFO):
+    """Set up a basic logger
+    :param level: desired log level
+    """
+
+    logging.basicConfig(
+        level=level,
+        datefmt="%Y-%m-%d %H:%M:%S",
+        format="[%(asctime)s] %(name)s:%(lineno)d %(levelname)s: %(message)s",
+    )
