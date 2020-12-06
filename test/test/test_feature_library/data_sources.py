@@ -2,7 +2,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql.types import DoubleType, IntegerType
 
 import blizz.check
-from blizz.dataobjects import Relation, Field
+from blizz import Relation, Field
 from test.conftest import path_to_test_data, get_or_create_spark_session
 
 

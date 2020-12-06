@@ -1,5 +1,5 @@
 from blizz import _inspect
-from blizz.dataobjects import Relation, Type
+from ._primitives import Relation, Type
 from pyspark.sql import DataFrame
 import functools
 

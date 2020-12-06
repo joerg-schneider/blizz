@@ -1,5 +1,5 @@
 from test.test_feature_library.data_sources import *
-from blizz import *
+from blizz import Feature, FeatureGroup
 from typing import *
 from pyspark.sql import Column, DataFrame
 from pyspark.sql import functions as F

@@ -4,8 +4,8 @@ from test.test_feature_library.data_sources import *
 from blizz import Feature, FeatureGroup, FeatureParameter
 from pyspark.sql import DataFrame, Column, SparkSession
 import pyspark.sql.functions as F
-
-from blizz.dataobjects import Relation, Field, DoubleType
+from pyspark.sql.types import DoubleType
+from blizz import Relation, Field
 
 
 def test_feature_group(spark_session: SparkSession, path_boston_test: Path):

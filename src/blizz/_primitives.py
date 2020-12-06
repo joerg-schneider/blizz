@@ -157,7 +157,7 @@ class Field(str):
 
 
 class FieldRenames:
-    """ Holding the transformation of input schema to used schema"""
+    """ Holding a transformation dict of input field names to renamed fields"""
 
     def __init__(self, input_to_used: dict):
         self.input_to_used = input_to_used

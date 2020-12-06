@@ -5,7 +5,7 @@ from typing import Iterable, Optional
 
 from pyspark.sql import DataFrame, Column
 from ._helpers import camel_case_to_snake, safe_name
-from .dataobjects import Field, Relation
+from ._primitives import Field, Relation
 from itertools import product
 
 
