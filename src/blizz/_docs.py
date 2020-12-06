@@ -16,7 +16,7 @@ import subprocess
 DIR_SPHINX_BASE = Path(os.path.dirname(os.path.abspath(__file__))).joinpath(
     "sphinx-base"
 )
-TABLE_TEMPLATE = DIR_SPHINX_BASE.joinpath("data-sources/table-template.rst")
+TABLE_TEMPLATE = DIR_SPHINX_BASE.joinpath("relations/relation-template.rst")
 FG_TEMPLATE = DIR_SPHINX_BASE.joinpath("features/feature-group-template.rst")
 
 PORT = 8080
