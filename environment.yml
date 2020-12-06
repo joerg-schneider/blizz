@@ -12,5 +12,6 @@ dependencies:
   - tornado
   - pydata-sphinx-theme
   - sphinx
+  - jupyterlab
   - pyyaml
   - schema
