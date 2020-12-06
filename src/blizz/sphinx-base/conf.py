@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Feature Library"
+project = "blizz Feature Library"
 copyright = "2020-"
 author = ""
 
@@ -63,7 +63,7 @@ html_sidebars = {
 # a list of builtin themes.
 #
 html_theme = "pydata_sphinx_theme"
-html_logo = "_static/forger.svg"
+html_logo = "_static/blizz-logo.png"
 
 html_theme_options = {
     "external_links": [
