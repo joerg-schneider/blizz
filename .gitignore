@@ -406,3 +406,6 @@ TSWLatexianTemp*
 #
 /tmp
 !/tmp/README.md
+
+# by default ignore notebooks/
+notebooks
