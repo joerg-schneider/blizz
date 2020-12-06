@@ -3,6 +3,10 @@ from blizz.dataobjects import Relation, Type
 from pyspark.sql import DataFrame
 import functools
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def _field_existence(r: Type[Relation], data: DataFrame):
     for t_column in r.get_fields():
@@ -10,6 +14,8 @@ def _field_existence(r: Type[Relation], data: DataFrame):
             raise ValueError(
                 f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
             )
+
+    logger.info(f"Relation {r.name()} has passed the field existance check.")
 
 
 def _field_types(r: Type[Relation], data: DataFrame):
@@ -25,6 +31,8 @@ def _field_types(r: Type[Relation], data: DataFrame):
                             f"Type error for '{r.name()}.{t_column.name}': "
                             f"got: {spark_type}, expected: {t_column.datatype().simpleString()}"
                         )
+
+    logger.info(f"Relation {r.name()} has passed the field datatype check.")
 
 
 def _keys(r: Type[Relation], data: DataFrame):
