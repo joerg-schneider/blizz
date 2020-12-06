@@ -27,7 +27,12 @@ def _field_types(r: Type[Relation], data: DataFrame):
                         )
 
 
-def schema(func):
+def _keys(r: Type[Relation], data: DataFrame):
+    # todo: implement
+    pass
+
+
+def fields(func):
     @functools.wraps(func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(func)
@@ -46,6 +51,18 @@ def types(func):
         assert relation is not None
         res = func(*args, **kwargs)
         _field_types(r=relation, data=res)
+        return res
+
+    return _decorated
+
+
+def keys(func):
+    @functools.wraps(func)
+    def _decorated(*args, **kwargs):
+        relation = _inspect.get_class_that_defined_method(func)
+        assert relation is not None
+        res = func(*args, **kwargs)
+        _keys(r=relation, data=res)
         return res
 
     return _decorated

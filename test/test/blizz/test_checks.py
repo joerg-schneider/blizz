@@ -19,7 +19,7 @@ class BostonFaulty1(Relation):
     THIS_IS_MISSING = Field(name="I'm missing")
 
     @classmethod
-    @blizz.check.schema
+    @blizz.check.fields
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
             path=path_to_test_data().joinpath("boston.csv").as_posix(),
@@ -37,7 +37,7 @@ class BostonFaulty2(Relation):
     CRIM = Field(name="CRIM", datatype=StringType)
 
     @classmethod
-    @blizz.check.schema
+    @blizz.check.fields
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(

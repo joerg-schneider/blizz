@@ -27,7 +27,7 @@ class Boston(Relation):
     MEDV = Field(name="MEDV", datatype=DoubleType)
 
     @classmethod
-    @blizz.check.schema
+    @blizz.check.fields
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
