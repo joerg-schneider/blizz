@@ -6,5 +6,5 @@ Feature Library
 .. toctree::
    :maxdepth: 2
 
-   data-sources/index
+   relations/index
    features/index
