@@ -26,7 +26,7 @@ HOST = "127.0.0.1"
 def create_sphinx_html(source_dir: Path, target_dir: Path):
     source_tables = find_source_tables_on_path(basepath=source_dir)
     source_table_rsts: Dict[Type[Relation], str] = {
-        st: source_table_to_rst(st_in=st) for st in source_tables
+        st: relation_to_rst(st_in=st) for st in source_tables
     }
     feature_groups = find_feature_groups_on_path(basepath=source_dir)
     feature_rsts = {fg: feature_group_to_rst(fg_in=fg) for fg in feature_groups}
@@ -144,7 +144,7 @@ Feature Definition
         )
 
 
-def source_table_to_rst(st_in: Type[Relation]) -> str:
+def relation_to_rst(st_in: Type[Relation]) -> str:
     def _make_pk_section(pk_fields: List[Field]) -> str:
         if len(pk_fields) == 0:
             return "Unknown – no fields have been flagged as keys yet."
