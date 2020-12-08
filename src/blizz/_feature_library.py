@@ -6,6 +6,7 @@ from typing import Iterable, Optional
 from pyspark.sql import DataFrame, Column
 from ._helpers import camel_case_to_snake, safe_name
 from ._primitives import Field, Relation
+from ._constants import ALL_FIELDS
 from itertools import product
 
 
@@ -53,9 +54,11 @@ class FeatureGroup(ABC):
         return cls.__name__
 
     @classmethod
-    @abstractmethod
     def compute_base(cls) -> DataFrame:
-        pass
+        assert (
+            len(cls.data_sources) == 1
+        ), "If a feature group uses more than 1 relation, override 'compute_base()'"
+        return cls.data_sources[0].load()
 
     # todo: Unit test this well!
 
@@ -88,6 +91,8 @@ class FeatureGroup(ABC):
 
         if keep is None:
             keep = set()
+        elif keep == ALL_FIELDS:
+            keep = set(base.columns)
         else:
             keep = {str(f) for f in keep}
 
@@ -137,7 +142,7 @@ class FeatureGroup(ABC):
                 return_df = computed_feature.withColumnRenamed(
                     existing=to_rename, new=col_name
                 )
-                base_ = base_.join(other=return_df, on=aggregation_level)
+                base_ = base_.join(other=return_df, on=aggregation_level, how="left")
             return base_
 
         for f in features:
