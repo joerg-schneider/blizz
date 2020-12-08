@@ -25,6 +25,17 @@ def build(library_root, output, config=None):
     :param config:
     :return:
     """
+    overwrite = False
+    if os.path.exists(library_root):
+        confirm = click.prompt(
+            "The output path exists – overwrite?",
+            default="n",
+            type=click.Choice(choices=["y", "n"]),
+        )
+        if confirm == "n":
+            exit(0)
+        else:
+            overwrite=True
 
     rc = run_config_from_file(
         file=Path(config), feature_library_base_path=Path(library_root)
@@ -34,7 +45,7 @@ def build(library_root, output, config=None):
     r = build_features(config=rc)
     click.echo(Fore.BLUE + "Features built." + Fore.RESET)
     click.echo(Fore.RED + "Storing features ..." + Fore.RESET)
-    write_results(config=rc, out_path=Path(output), results=r)
+    write_results(config=rc, out_path=Path(output), results=r, overwrite=overwrite)
     click.echo(Fore.BLUE + "Features stored." + Fore.RESET)
 
 

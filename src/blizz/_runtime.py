@@ -33,15 +33,19 @@ def build_features(config: RunConfig) -> Dict[Type[FeatureGroup], DataFrame]:
 
 
 def write_results(
-    config: RunConfig, out_path: Path, results: Dict[Type[FeatureGroup], DataFrame]
+    config: RunConfig,
+    out_path: Path,
+    results: Dict[Type[FeatureGroup], DataFrame],
+    overwrite: bool = False,
 ) -> None:
     for fg, sdf in results.items():
 
         full_output_path = str(out_path.joinpath(fg.name()))
+        save_mode = "overwrite" if overwrite else ""
 
         if config.output_format == OutputFormat.CSV:
-            sdf.write.csv(path=full_output_path, header=True)
+            sdf.write.mode(save_mode).csv(path=full_output_path, header=True)
         if config.output_format == OutputFormat.PARQUET:
-            sdf.write.parquet(path=full_output_path)
+            sdf.write.mode(save_mode).parquet(path=full_output_path)
 
         _cleanup_spark_files(Path(full_output_path))
