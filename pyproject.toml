@@ -17,6 +17,7 @@ requires = [
     "pandas >= 0.24,<1.2",
     "pyyaml >= 5.0",
     "pyspark >= 2.4",
+    "pyspark-stubs",
     "click >= 7.1",
     "colorama",
     "tornado",
@@ -54,7 +55,7 @@ blizz = "blizz._cli:main"
 [tool.black]
 # quiet = "True"
 line-length = 88
-target_version = ['py36']
+target_version = ['py38']
 include = '\.pyi?$'
 exclude = '''
 (
