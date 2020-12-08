@@ -13,6 +13,7 @@ from ._feature_library import (
 )
 from ._primitives import Relation, Field
 from ._bootstrapping import relation_from_dataframe
+from ._constants import ALL_FIELDS
 
 __version__ = "0.1.0"
 
