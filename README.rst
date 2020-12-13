@@ -2,4 +2,4 @@
 
 Test installation:
 
-`pip install git+https://github.com/joerg-schneider/blizz/#egg=blizz`
+``pip install git+https://github.com/joerg-schneider/blizz/#egg=blizz``
