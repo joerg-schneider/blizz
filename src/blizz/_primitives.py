@@ -1,8 +1,21 @@
 from typing import *
 
-from pyspark.sql import DataFrame
-from pyspark.sql.types import *
 from abc import abstractmethod
+
+try:
+    import pyspark
+except ImportError as e:
+    pyspark = None
+
+try:
+    import pandas
+except ImportError as e:
+    pandas = None
+
+try:
+    import numpy
+except ImportError as e:
+    numpy = None
 
 
 class Relation:
@@ -20,16 +33,18 @@ class Relation:
     #       the location!
     @classmethod
     @abstractmethod
-    def load(cls) -> DataFrame:
+    def load(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
         pass
 
     @classmethod
-    def mock(cls) -> DataFrame:
+    def mock(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
         pass
 
     @classmethod
     # todo: evaluate datatype Field() here as opposed to str
-    def get_defined_types(cls) -> Dict[str, DataType]:
+    def get_defined_types(
+        cls
+    ) -> Dict[str, Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]]:
         """
         :return: Dictionary where a Field maps to the pandas/np/pySpark datatype
         """
@@ -112,7 +127,7 @@ class Relation:
 class Field(str):
     # todo: add mock callable argument!
     name: str
-    datatype: Type[DataType]
+    datatype: Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]
     default: Any
     description: str
     key: bool
@@ -120,7 +135,7 @@ class Field(str):
     def __new__(
         cls,
         name: str,
-        datatype: Type[DataType] = None,
+        datatype: Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", str] = None,
         default: Any = None,
         description: str = None,
         key: bool = None,
