@@ -8,6 +8,18 @@ import importlib
 from typing import Any, Iterable
 import logging
 
+logger = logging.getLogger(__name__)
+
+try:
+    import pyspark
+except ImportError as e:
+    pyspark = None
+
+try:
+    import pandas
+except ImportError as e:
+    pandas = None
+
 
 def camel_case_to_snake(name: str) -> str:
     # find all switches from lower to upper
@@ -73,3 +85,31 @@ def setup_logger(level: int = logging.INFO):
         datefmt="%Y-%m-%d %H:%M:%S",
         format="[%(asctime)s] %(name)s:%(lineno)d %(levelname)s: %(message)s",
     )
+
+
+def check_pandas_or_pyspark_available(raise_error: bool = False) -> None:
+    if pandas is None and pyspark is None:
+        msg = f"'pandas' or 'pyspark' is required for blizz, but neither found."
+        if raise_error:
+            logger.warning(msg)
+        else:
+            raise ImportError(msg)
+
+
+def check_dataframe_type(data) -> str:
+    if pyspark is not None and isinstance(data, pyspark.sql.DataFrame):
+        return "pyspark"
+    elif pandas is not None and isinstance(data, pandas.DataFrame):
+        return "pandas"
+    else:
+        raise ValueError(
+            f"Unsupported Python instance of type {data.__class__} for relation {r.name()}"
+        )
+
+
+def is_pyspark_df(data) -> bool:
+    return check_dataframe_type(data) == "pyspark"
+
+
+def is_pandas_df(data) -> bool:
+    return check_dataframe_type(data) == "pandas"
