@@ -41,7 +41,7 @@ def write_results(
     for fg, sdf in results.items():
 
         full_output_path = str(out_path.joinpath(fg.name()))
-        save_mode = "overwrite" if overwrite else ""
+        save_mode = "overwrite" if overwrite else None
 
         if config.output_format == OutputFormat.CSV:
             sdf.write.mode(save_mode).csv(path=full_output_path, header=True)
