@@ -31,6 +31,7 @@ def _field_existence(
                 )
     elif _helpers.is_pandas_df(data):
         # todo: implement this for Pandas
+        raise NotImplementedError
         pass
 
     logger.info(f"Relation {r.name()} has passed the field existance check.")
@@ -55,6 +56,7 @@ def _field_types(
 
     elif _helpers.is_pandas_df(data):
         # todo: implement this for Pandas
+        raise NotImplementedError
         pass
 
     logger.info(f"Relation {r.name()} has passed the field datatype check.")
@@ -63,9 +65,11 @@ def _field_types(
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
     if _helpers.is_pyspark_df(data):
         # todo: implement this for Pandas
+        raise NotImplementedError
         pass
     elif _helpers.is_pandas_df(data):
         # todo: implement this for Pandas
+        raise NotImplementedError
         pass
 
     logger.info(f"Relation {r.name()} has passed the key unqiue-ness check.")
