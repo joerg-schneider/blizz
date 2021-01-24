@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Optional, Dict, Any, Iterable, Union, Tuple
-from test.test_feature_library.data_sources import *
+from test.test_spark_feature_library.data_sources import *
 from blizz import Feature, FeatureGroup, FeatureParameter
 from pyspark.sql import DataFrame, Column, SparkSession
 import pyspark.sql.functions as F

@@ -14,32 +14,32 @@ def test_validate_config(path_test_feature_lists: Path) -> None:
 
 
 def test_runconfig_from_file(
-    path_test_feature_lists: Path, path_test_feature_library: Path
+    path_test_feature_lists: Path, path_test_spark_feature_library
 ) -> None:
     rc = run_config_from_file(
         file=path_test_feature_lists.joinpath("TestFeatureList-1.yaml"),
-        feature_library_base_path=path_test_feature_library,
+        feature_library_base_path=path_test_spark_feature_library,
     )
 
     print(rc)
 
 
-def test_build_features(path_test_feature_lists: Path, path_test_feature_library: Path):
+def test_build_features(path_test_feature_lists: Path, path_test_spark_feature_library):
     rc = run_config_from_file(
         file=path_test_feature_lists.joinpath("TestFeatureList-1.yaml"),
-        feature_library_base_path=path_test_feature_library,
+        feature_library_base_path=path_test_spark_feature_library,
     )
     build_features(rc)
 
 
 def test_write_results(
     path_test_feature_lists: Path,
-    path_test_feature_library: Path,
+        path_test_spark_feature_library,
     path_tmp_folder: Path,
 ):
     rc = run_config_from_file(
         file=path_test_feature_lists.joinpath("TestFeatureList-1.yaml"),
-        feature_library_base_path=path_test_feature_library,
+        feature_library_base_path=path_test_spark_feature_library,
     )
     results = build_features(rc)
     write_results(config=rc, results=results, out_path=path_tmp_folder)

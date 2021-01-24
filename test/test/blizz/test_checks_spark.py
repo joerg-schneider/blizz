@@ -8,7 +8,7 @@ from pyspark.sql import DataFrame
 from pyspark.sql.types import StringType
 
 from test.conftest import get_or_create_spark_session, path_to_test_data
-from test.test_feature_library.data_sources import Boston
+from test.test_spark_feature_library.data_sources import Boston
 
 
 class BostonFaulty1(Relation):

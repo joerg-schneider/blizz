@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 import pytest
 from pyspark.sql import SparkSession
-from test import test_feature_library
+from test import test_spark_feature_library
 
 
 def path_to_test_data() -> Path:
@@ -16,8 +16,8 @@ def path_boston_test() -> Path:
 
 
 @pytest.fixture
-def path_test_feature_library() -> Path:
-    return Path(os.path.dirname(test_feature_library.__file__))
+def path_test_spark_feature_library() -> Path:
+    return Path(os.path.dirname(test_spark_feature_library.__file__))
 
 
 @pytest.fixture
