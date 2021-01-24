@@ -8,7 +8,7 @@ exclude = [".idea", "tmp", "dist", ".tox", ".pytest_cache"]
 [tool.flit.metadata]
 module = "blizz"
 author = ""
-home-page = "https://github.gamma.bcg.com"
+home-page = "https://github.com"
 description-file = "README.rst"
 dist-name = "blizz"
 
@@ -46,8 +46,8 @@ docs = [
 ]
 
 [tool.flit.metadata.urls]
-Documentation = "https://github.gamma.bcg.com"
-Repository = "https://github.gamma.bcg.com"
+Documentation = "https://github.com"
+Repository = "https://github.com"
 
 [tool.flit.scripts]
 blizz = "blizz._cli:main"
