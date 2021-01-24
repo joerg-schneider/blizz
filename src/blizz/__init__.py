@@ -16,10 +16,10 @@ from ._feature_library import (
 from ._primitives import Relation, Field
 
 __version__ = "0.1.0"
-DEFAULT_LOG_LEVEL = __os.environ.get("BLIZZ_LOG_LEVEL", __logging.INFO)
+__DEFAULT_LOG_LEVEL = __os.environ.get("BLIZZ_LOG_LEVEL", __logging.INFO)
 
 __logging.basicConfig(
-    level=DEFAULT_LOG_LEVEL,
+    level=__DEFAULT_LOG_LEVEL,
     datefmt="%Y-%m-%d %H:%M:%S",
     format="[%(asctime)s] %(name)s:%(lineno)d %(levelname)s: %(message)s",
 )
@@ -42,12 +42,12 @@ if __pandas is None and __pyspark is None:
 
 
 __all__ = [
-    Relation,
-    Field,
-    relation_from_dataframe,
-    Feature,
-    FeatureGroup,
-    FeatureParameter,
-    AggregatedFeatureGroup,
-    ALL_FIELDS,
+    "Relation",
+    "Field",
+    "relation_from_dataframe",
+    "Feature",
+    "FeatureGroup",
+    "FeatureParameter",
+    "AggregatedFeatureGroup",
+    "ALL_FIELDS",
 ]
