@@ -5,18 +5,18 @@ from blizz._helpers import pyspark, pandas
 
 try:
     import pyspark
-except ImportError:
-    pyspark = None
+except ImportError:     # pragma: no cover
+    pyspark = None      # pragma: no cover
 
 try:
     import pandas
-except ImportError:
-    pandas = None
+except ImportError:     # pragma: no cover
+    pandas = None       # pragma: no cover
 
 try:
     import numpy
-except ImportError:
-    numpy = None
+except ImportError:     # pragma: no cover
+    numpy = None        # pragma: no cover
 
 
 class Relation:

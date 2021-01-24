@@ -8,13 +8,13 @@ from ._primitives import Relation, Type, is_pandas_df, is_pyspark_df
 
 try:
     import pyspark
-except ImportError:
-    pyspark = None
+except ImportError:     # pragma: no cover
+    pyspark = None      # pragma: no cover
 
 try:
     import pandas
-except ImportError:
-    pandas = None
+except ImportError:     # pragma: no cover
+    pandas = None       # pragma: no cover
 
 logger = logging.getLogger(__name__)
 
