@@ -12,12 +12,8 @@ home-page = "https://github.com"
 description-file = "README.rst"
 dist-name = "blizz"
 
-# todo: remove Pandas & PySpark from deps; user to install themselves
 requires = [
-    "pandas >= 0.24,<1.2",
     "pyyaml >= 5.0",
-    "pyspark >= 2.4",
-    "pyspark-stubs",
     "click >= 7.1",
     "colorama",
     "tornado",
@@ -29,19 +25,24 @@ requires = [
 requires-python = ">=3.6,<4"
 
 [tool.flit.metadata.requires-extra]
+pyspark = [
+    "pyspark >= 2.4",
+    "pyspark-stubs",
+]
+pandas = [
+    "pandas >= 0.24,<1.2",
+]
 testing = [
-    "pytest >= 5.2.*",
-    "pytest-cov == 2.8.*",
-    "flake8 == 3.8.*",
-    "flake8-comprehensions == 3.2.*",
-    "isort == 5.5.*",
+    "pytest >= 6.2.*",
+    "pytest-cov >= 2.10.*",
+    "flake8 >= 3.8.*",
+    "flake8-comprehensions >= 3.3.*",
+    "isort >= 5.7.*",
 ]
 docs = [
-    "sphinx-autodoc-typehints == 1.11.*",
-    "nbsphinx == 0.7.*",
+    "nbsphinx >= 0.7.*",
     "jupyter >= 1.0",
     "docutils",
-    "xlrd == 1.2.*",
     "m2r == 0.2.*"
 ]
 
