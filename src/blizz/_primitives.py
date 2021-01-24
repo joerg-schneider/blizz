@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing import Union, Type, Dict, Any, Optional, List, Iterable
 
+from blizz._helpers import pyspark, pandas
+
 try:
     import pyspark
 except ImportError:
@@ -179,3 +181,25 @@ class FieldRenames:
     @property
     def used_to_input(self) -> dict:
         return {val: key for key, val in self.input_to_used.items()}
+
+
+def check_dataframe_type(data: Any, relation: Optional[Type[Relation]]) -> str:
+    if pyspark is not None and isinstance(data, pyspark.sql.DataFrame):
+        return "pyspark"
+    elif pandas is not None and isinstance(data, pandas.DataFrame):
+        return "pandas"
+    else:
+        relation_name = (
+            relation.name() if issubclass(relation, Relation) else str(relation)
+        )
+        raise ValueError(
+            f"Unsupported Python instance of type {data.__class__} for relation '{relation_name}'"
+        )
+
+
+def is_pyspark_df(data: Any, relation: Optional[Type[Relation]]) -> bool:
+    return check_dataframe_type(data, relation) == "pyspark"
+
+
+def is_pandas_df(data: Any, relation: Optional[Type[Relation]]) -> bool:
+    return check_dataframe_type(data, relation) == "pandas"

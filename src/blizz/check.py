@@ -3,8 +3,8 @@ import logging
 import warnings
 from typing import Union
 
-from blizz import _inspect, _helpers
-from ._primitives import Relation, Type
+from blizz import _inspect
+from ._primitives import Relation, Type, is_pandas_df, is_pyspark_df
 
 try:
     import pyspark
@@ -45,14 +45,14 @@ def doublewrap(f):
 def _field_existence(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
-    if _helpers.is_pyspark_df(data, r):
+    if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
                 raise ValueError(
                     f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
                 )
-    elif _helpers.is_pandas_df(data, r):
+    elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
@@ -66,7 +66,7 @@ def _field_existence(
 def _field_types(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
-    if _helpers.is_pyspark_df(data, r):
+    if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name in data.columns:
@@ -81,7 +81,7 @@ def _field_types(
                                 f"got: {spark_type}, expected: {t_column.datatype().simpleString()}"
                             )
 
-    elif _helpers.is_pandas_df(data, r):
+    elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name in data.columns:
@@ -99,11 +99,11 @@ def _field_types(
 
 
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
-    if _helpers.is_pyspark_df(data, r):
+    if is_pyspark_df(data, r):
         # todo: implement this for Spark
         raise NotImplementedError
         pass
-    elif _helpers.is_pandas_df(data, r):
+    elif is_pandas_df(data, r):
         # todo: implement this for Pandas
         raise NotImplementedError
         pass

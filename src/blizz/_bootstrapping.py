@@ -1,8 +1,15 @@
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
-import pandas
-import pyspark
+try:
+    import pyspark
+except ImportError:
+    pyspark = None
+
+try:
+    import pandas
+except ImportError:
+    pandas = None
 
 from ._helpers import safe_name
 
@@ -18,9 +25,9 @@ class {table_name}(Relation):
 {fields}
 
     @classmethod
-    @blizz.check.keys
-    @blizz.check.types
-    @blizz.check.fields
+    @blizz.check.keys(on_fail = blizz.check.WARN)
+    @blizz.check.types(on_fail = blizz.check.WARN)
+    @blizz.check.fields(on_fail = blizz.check.WARN)
     def load(cls) -> DataFrame:
         \"\"\"
         todo: describe relation {table_name} load process in this docstring
@@ -69,7 +76,7 @@ def data_source_definition(
 
 
 def relation_from_dataframe(
-    df: pyspark.sql.DataFrame,
+    df: Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
     name: Optional[str] = "",
     print_text: bool = True,
     add_imports: bool = True,

@@ -1,8 +1,9 @@
 """
 blizz – if you need features, you came to the right place!
 """
-import logging
-import os
+
+import logging as __logging
+import os as __os
 
 from ._bootstrapping import relation_from_dataframe
 from ._constants import ALL_FIELDS
@@ -12,14 +13,33 @@ from ._feature_library import (
     FeatureParameter,
     AggregatedFeatureGroup,
 )
-from ._helpers import setup_logger
 from ._primitives import Relation, Field
 
 __version__ = "0.1.0"
+DEFAULT_LOG_LEVEL = __os.environ.get("BLIZZ_LOG_LEVEL", __logging.INFO)
 
-DEFAULT_LOG_LEVEL = os.environ.get("BLIZZ_LOG_LEVEL", logging.INFO)
+__logging.basicConfig(
+    level=DEFAULT_LOG_LEVEL,
+    datefmt="%Y-%m-%d %H:%M:%S",
+    format="[%(asctime)s] %(name)s:%(lineno)d %(levelname)s: %(message)s",
+)
 
-setup_logger(DEFAULT_LOG_LEVEL)
+
+# blizz needs either PySpark or pandas, check and raise if missing:
+try:
+    import pyspark as __pyspark
+except ImportError:
+    __pyspark = None
+
+try:
+    import pandas as __pandas
+except ImportError:
+    __pandas = None
+
+if __pandas is None and __pyspark is None:
+    msg = "'pandas' or 'pyspark' is required for blizz, but neither found."
+    raise ImportError(msg)
+
 
 __all__ = [
     Relation,
