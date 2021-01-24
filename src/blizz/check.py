@@ -30,9 +30,12 @@ def _field_existence(
                     f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
                 )
     elif _helpers.is_pandas_df(data):
-        # todo: implement this for Pandas
-        raise NotImplementedError
-        pass
+        data: pandas.DataFrame = data
+        for t_column in r.get_fields():
+            if t_column.name not in data.columns:
+                raise ValueError(
+                    f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
+                )
 
     logger.info(f"Relation {r.name()} has passed the field existance check.")
 
@@ -41,6 +44,7 @@ def _field_types(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
     if _helpers.is_pyspark_df(data):
+        data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name in data.columns:
                 if t_column.datatype is not None:
@@ -55,9 +59,18 @@ def _field_types(
                             )
 
     elif _helpers.is_pandas_df(data):
-        # todo: implement this for Pandas
-        raise NotImplementedError
-        pass
+        data: pandas.DataFrame = data
+        for t_column in r.get_fields():
+            if t_column.name in data.columns:
+                if t_column.datatype is not None:
+                    if (
+                        t_column.name
+                        not in data.select_dtypes(include=t_column.datatype).columns
+                    ):
+                        raise ValueError(
+                            f"Type error for '{r.name()}.{t_column.name}': "
+                            f"got: {data[t_column].dtype}, expected: {t_column.datatype}"
+                        )
 
     logger.info(f"Relation {r.name()} has passed the field datatype check.")
 
