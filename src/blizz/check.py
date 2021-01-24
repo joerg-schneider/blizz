@@ -77,7 +77,7 @@ def _field_types(
 
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
     if _helpers.is_pyspark_df(data):
-        # todo: implement this for Pandas
+        # todo: implement this for Spark
         raise NotImplementedError
         pass
     elif _helpers.is_pandas_df(data):
