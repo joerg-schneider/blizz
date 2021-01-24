@@ -1,5 +1,6 @@
-from blizz import _inspect
 import functools
+
+from blizz import _inspect
 
 
 def deduplication(func):

@@ -1,8 +1,10 @@
+import os
 from pathlib import Path
 from typing import Dict, Type
+
 from pyspark.sql import DataFrame
+
 from blizz._run_config import RunConfig, FeatureGroup, OutputFormat
-import os
 
 
 def _cleanup_spark_files(in_path: Path) -> None:

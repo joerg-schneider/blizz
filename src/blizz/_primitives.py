@@ -1,20 +1,19 @@
-from typing import *
-
 from abc import abstractmethod
+from typing import Union, Type, Dict, Any, Optional, List, Iterable
 
 try:
     import pyspark
-except ImportError as e:
+except ImportError:
     pyspark = None
 
 try:
     import pandas
-except ImportError as e:
+except ImportError:
     pandas = None
 
 try:
     import numpy
-except ImportError as e:
+except ImportError:
     numpy = None
 
 

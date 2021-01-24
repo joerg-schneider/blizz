@@ -1,13 +1,14 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Tuple, NamedTuple, Union, Type
+from itertools import product
+from typing import Dict, Any, Tuple, NamedTuple, Union, Type
 from typing import Iterable, Optional
 
 from pyspark.sql import DataFrame, Column
+
+from ._constants import ALL_FIELDS
 from ._helpers import camel_case_to_snake, safe_name
 from ._primitives import Field, Relation
-from ._constants import ALL_FIELDS
-from itertools import product
 
 
 class FeatureParameter(NamedTuple):

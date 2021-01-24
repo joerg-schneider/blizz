@@ -1,9 +1,10 @@
+import functools
+import inspect
 from pathlib import Path
+from typing import Iterable, Type
+
 from blizz import FeatureGroup, Relation
 from ._helpers import all_python_modules_in_path
-from typing import Iterable, Type
-import inspect
-import functools
 
 
 def find_source_tables_on_path(basepath: Path) -> Iterable[Type[Relation]]:

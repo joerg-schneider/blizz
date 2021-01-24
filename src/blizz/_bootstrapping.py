@@ -1,5 +1,5 @@
-from typing import Iterable, Optional
 from pathlib import Path
+from typing import Iterable, Optional
 
 import pandas
 import pyspark
@@ -31,7 +31,8 @@ class {table_name}(Relation):
 
 
 def data_source_definition_from_file(path: Path, table_name: str):
-    temp_df = pandas.read_csv(filepath_or_buffer=str(path), nrows=10000)
+    pass
+    # temp_df = pandas.read_csv(filepath_or_buffer=str(path), nrows=10000)
 
 
 def data_source_definition(

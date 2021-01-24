@@ -1,20 +1,19 @@
+import functools
+import logging
 import warnings
 from typing import Union
 
 from blizz import _inspect, _helpers
 from ._primitives import Relation, Type
-import functools
-
-import logging
 
 try:
     import pyspark
-except ImportError as e:
+except ImportError:
     pyspark = None
 
 try:
     import pandas
-except ImportError as e:
+except ImportError:
     pandas = None
 
 logger = logging.getLogger(__name__)

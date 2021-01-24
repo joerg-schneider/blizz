@@ -1,13 +1,13 @@
-import io
+import os
 import tempfile
 from pathlib import Path
 
-from blizz._docs import serve_sphinx_html, create_sphinx_html
-from blizz._runtime import build_features, write_results
-from blizz._run_config import run_config_from_file
 import click
-import os
-from colorama import Fore, Back, Style
+from colorama import Fore
+
+from blizz._docs import serve_sphinx_html, create_sphinx_html
+from blizz._run_config import run_config_from_file
+from blizz._runtime import build_features, write_results
 
 
 @click.group()

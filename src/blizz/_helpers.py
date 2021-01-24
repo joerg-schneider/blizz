@@ -1,23 +1,23 @@
-import re
-from itertools import chain
-from glob import glob
-import os
-from pathlib import Path
-import importlib.util
 import importlib
-from typing import Any, Iterable
+import importlib.util
 import logging
+import os
+import re
+from glob import glob
+from itertools import chain
+from pathlib import Path
+from typing import Any, Iterable
 
 logger = logging.getLogger(__name__)
 
 try:
     import pyspark
-except ImportError as e:
+except ImportError:
     pyspark = None
 
 try:
     import pandas
-except ImportError as e:
+except ImportError:
     pandas = None
 
 
@@ -89,7 +89,7 @@ def setup_logger(level: int = logging.INFO):
 
 def check_pandas_or_pyspark_available(raise_error: bool = False) -> None:
     if pandas is None and pyspark is None:
-        msg = f"'pandas' or 'pyspark' is required for blizz, but neither found."
+        msg = "'pandas' or 'pyspark' is required for blizz, but neither found."
         if raise_error:
             logger.warning(msg)
         else:

@@ -1,17 +1,18 @@
+import inspect
+import os
 import shutil
+import subprocess
 import tempfile
+import webbrowser
 from pathlib import Path
 from typing import Type, Tuple, Iterable, List, Dict, Any
-import webbrowser
+
 import tornado
+from pyspark.sql.types import DataType
 from tornado import web, ioloop
 
 from blizz import FeatureGroup, Relation, Feature, Field
 from blizz._inspect import find_source_tables_on_path, find_feature_groups_on_path
-from pyspark.sql.types import DataType
-import inspect
-import os
-import subprocess
 
 DIR_SPHINX_BASE = Path(os.path.dirname(os.path.abspath(__file__))).joinpath(
     "sphinx-base"
@@ -109,7 +110,7 @@ Available Parameters
 Feature Definition
     .. code-block:: python
        :linenos:
-       
+
        {feature_code}
 """
         return "\n\n".join(
