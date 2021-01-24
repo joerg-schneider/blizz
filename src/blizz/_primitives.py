@@ -101,6 +101,14 @@ class Relation:
         raise ValueError(f"Field '{field}' not defined for Relation '{cls.name()}'.")
 
     @classmethod
+    def get_defaults(cls) -> Dict["Field", Any]:
+        return {
+            field: field.default
+            for field in cls.get_fields()
+            if field.default is not None
+        }
+
+    @classmethod
     def equals(cls, other: Type["Relation"]) -> bool:
         # 1. same number of fields
         if len(cls.get_fields()) != len(other.get_fields()):
