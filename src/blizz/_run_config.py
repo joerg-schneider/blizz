@@ -57,7 +57,7 @@ parameters_schema = Schema(
 )
 
 feature_schema = Schema(
-    {"name": And(str, len), Optional("parameters"): [parameters_schema],}
+    {"name": And(str, len), Optional("parameters"): [parameters_schema]}
 )
 
 feature_group_schema = Schema(
@@ -75,7 +75,7 @@ feature_group_schema = Schema(
 )
 
 config_schema = Schema(
-    {"output": output_schema, "feature-groups": [feature_group_schema],}
+    {"output": output_schema, "feature-groups": [feature_group_schema]}
 )
 
 

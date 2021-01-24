@@ -57,12 +57,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
             dst=str(target_dir.joinpath(folder)),
         )
 
-    for file in [
-        "conf.py",
-        "index.rst",
-        "relations/index.rst",
-        "features/index.rst",
-    ]:
+    for file in ["conf.py", "index.rst", "relations/index.rst", "features/index.rst"]:
         shutil.copy(
             src=str(DIR_SPHINX_BASE.joinpath(file)), dst=str(target_dir.joinpath(file))
         )

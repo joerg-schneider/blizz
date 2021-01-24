@@ -35,7 +35,7 @@ def build(library_root, output, config=None):
         if confirm == "n":
             exit(0)
         else:
-            overwrite=True
+            overwrite = True
 
     rc = run_config_from_file(
         file=Path(config), feature_library_base_path=Path(library_root)
@@ -71,9 +71,7 @@ def docs(library_root, serve):
     if serve:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir = Path(temp_dir)
-            create_sphinx_html(
-                source_dir=Path(library_root), target_dir=temp_dir,
-            )
+            create_sphinx_html(source_dir=Path(library_root), target_dir=temp_dir)
             serve_sphinx_html(temp_dir.joinpath("html"))
 
 
