@@ -62,10 +62,11 @@ def test_field_type_check() -> None:
     """
     """
     with pytest.raises(
-        expected_exception=ValueError, match="Type error for 'BostonFaulty2.CRIM'*",
+        expected_exception=ValueError, match="Type error for 'BostonFaulty2.CRIM'*"
     ):
         BostonFaulty2.load()
 
 
 def test_passes_checks() -> None:
-    Boston.load()
+    sdf = Boston.load()
+    assert sdf is not None

@@ -96,20 +96,20 @@ def check_pandas_or_pyspark_available(raise_error: bool = False) -> None:
             raise ImportError(msg)
 
 
-def check_dataframe_type(data) -> str:
+def check_dataframe_type(data, relation) -> str:
     if pyspark is not None and isinstance(data, pyspark.sql.DataFrame):
         return "pyspark"
     elif pandas is not None and isinstance(data, pandas.DataFrame):
         return "pandas"
     else:
         raise ValueError(
-            f"Unsupported Python instance of type {data.__class__} for relation {r.name()}"
+            f"Unsupported Python instance of type {data.__class__} for relation {relation.name()}"
         )
 
 
-def is_pyspark_df(data) -> bool:
-    return check_dataframe_type(data) == "pyspark"
+def is_pyspark_df(data, relation) -> bool:
+    return check_dataframe_type(data, relation) == "pyspark"
 
 
-def is_pandas_df(data) -> bool:
-    return check_dataframe_type(data) == "pandas"
+def is_pandas_df(data, relation) -> bool:
+    return check_dataframe_type(data, relation) == "pandas"

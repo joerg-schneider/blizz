@@ -1,3 +1,4 @@
+import warnings
 from typing import Union
 
 from blizz import _inspect, _helpers
@@ -18,18 +19,41 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
+WARN = "warn"
+RAISE = "raise"
+
+
+def doublewrap(f):
+    """
+    a decorator decorator, allowing the decorator to be used as:
+    @decorator(with, arguments, and=kwargs)
+    or
+    @decorator
+    """
+
+    @functools.wraps(f)
+    def new_dec(*args, **kwargs):
+        if len(args) == 1 and len(kwargs) == 0 and callable(args[0]):
+            # actual decorated function
+            return f(args[0])
+        else:
+            # decorator arguments
+            return lambda realf: f(realf, *args, **kwargs)
+
+    return new_dec
+
 
 def _field_existence(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
-    if _helpers.is_pyspark_df(data):
+    if _helpers.is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
                 raise ValueError(
                     f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
                 )
-    elif _helpers.is_pandas_df(data):
+    elif _helpers.is_pandas_df(data, r):
         data: pandas.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
@@ -43,7 +67,7 @@ def _field_existence(
 def _field_types(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
-    if _helpers.is_pyspark_df(data):
+    if _helpers.is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name in data.columns:
@@ -58,7 +82,7 @@ def _field_types(
                                 f"got: {spark_type}, expected: {t_column.datatype().simpleString()}"
                             )
 
-    elif _helpers.is_pandas_df(data):
+    elif _helpers.is_pandas_df(data, r):
         data: pandas.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name in data.columns:
@@ -76,11 +100,11 @@ def _field_types(
 
 
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
-    if _helpers.is_pyspark_df(data):
+    if _helpers.is_pyspark_df(data, r):
         # todo: implement this for Spark
         raise NotImplementedError
         pass
-    elif _helpers.is_pandas_df(data):
+    elif _helpers.is_pandas_df(data, r):
         # todo: implement this for Pandas
         raise NotImplementedError
         pass
@@ -88,37 +112,76 @@ def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFr
     logger.info(f"Relation {r.name()} has passed the key unqiue-ness check.")
 
 
-def fields(func):
-    @functools.wraps(func)
+@doublewrap
+def fields(original_func=None, *, on_fail: str = RAISE):
+    _verify_args(on_fail)
+
+    @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(func)
+        relation = _inspect.get_class_that_defined_method(original_func)
         assert relation is not None
-        res = func(*args, **kwargs)
-        _field_existence(r=relation, data=res)
+        res = original_func(*args, **kwargs)
+        _run_check_and_handle_outcome(
+            _field_existence, r=relation, data=res, on_fail=on_fail
+        )
+
         return res
 
     return _decorated
 
 
-def types(func):
-    @functools.wraps(func)
+@doublewrap
+def types(original_func=None, *, on_fail: str = RAISE):
+    _verify_args(on_fail)
+
+    @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(func)
+        relation = _inspect.get_class_that_defined_method(original_func)
         assert relation is not None
-        res = func(*args, **kwargs)
-        _field_types(r=relation, data=res)
+        res = original_func(*args, **kwargs)
+        _run_check_and_handle_outcome(
+            _field_types, r=relation, data=res, on_fail=on_fail
+        )
         return res
 
     return _decorated
 
 
-def keys(func):
-    @functools.wraps(func)
+@doublewrap
+def keys(original_func=None, *, on_fail: str = RAISE):
+    _verify_args(on_fail)
+
+    @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(func)
+        relation = _inspect.get_class_that_defined_method(original_func)
         assert relation is not None
-        res = func(*args, **kwargs)
-        _keys(r=relation, data=res)
+        res = original_func(*args, **kwargs)
+        _run_check_and_handle_outcome(_keys, r=relation, data=res, on_fail=on_fail)
+
         return res
 
     return _decorated
+
+
+def _run_check_and_handle_outcome(
+    check: callable, r: Type[Relation], data, on_fail: str
+) -> None:
+
+    # skip any check, if data is None, e.g. if earlier blizz.check already has failed:
+    if data is None:
+        return None
+
+    try:
+        check(r=r, data=data)
+    except Exception as error:
+        if on_fail == RAISE:
+            raise error
+        if on_fail == WARN:
+            warnings.warn(str(error))
+
+
+def _verify_args(on_fail: str) -> None:
+    if on_fail not in [RAISE, WARN]:
+        raise ValueError(
+            f"Invalid argument for 'on_fail':{on_fail}. Allowed: {RAISE}, {WARN}"
+        )

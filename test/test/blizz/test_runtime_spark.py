@@ -34,7 +34,7 @@ def test_build_features(path_test_feature_lists: Path, path_test_spark_feature_l
 
 def test_write_results(
     path_test_feature_lists: Path,
-        path_test_spark_feature_library,
+    path_test_spark_feature_library,
     path_tmp_folder: Path,
 ):
     rc = run_config_from_file(
