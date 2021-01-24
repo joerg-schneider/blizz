@@ -106,3 +106,101 @@ def test_apply_defaults_partial_3() -> None:
     assert filled[TestApplyDefaultsPartial3.NAME].equals(
         pd.Series(["Tom", "Peter", "Sarah"])
     )
+
+
+class TestApplyDedup1(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name", key=True)
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(
+            data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, None]}
+        )
+
+
+def test_apply_dedup1() -> None:
+    """
+    """
+
+    assert not TestApplyDedup1.load()[TestApplyDedup1.NAME].duplicated().any()
+
+
+class TestApplyDedupNoKeyDefined(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name")
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, 31]})
+
+
+def test_apply_dedup_no_key_defined() -> None:
+    """
+    """
+
+    assert not TestApplyDedupNoKeyDefined.load().duplicated().any()
+
+
+class TestApplyDedupPartial(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name")
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication(key=[AGE])
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Sarah", "Mike"], "age": [5, 31, 31]})
+
+
+def test_apply_dedup_partial() -> None:
+    """
+    """
+
+    assert TestApplyDedupPartial.load().equals(
+        pd.DataFrame(data={"name": ["Tom", "Sarah"], "age": [5, 31]})
+    )
+
+
+class TestApplyDedupSort(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name")
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication(key=[NAME], sort_on=[AGE], sort_order=blizz.apply.ASC)
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 25, 31]})
+
+
+def test_apply_dedup_sort() -> None:
+    """
+    """
+
+    assert TestApplyDedupSort.load().equals(
+        pd.DataFrame(data={"name": ["Tom", "Mike"], "age": [5, 25]})
+    )

@@ -1,3 +1,3 @@
-from blizz._apply import defaults, deduplication
+from blizz._apply import defaults, deduplication, ASC, DESC
 
-__all__ = ["defaults", "deduplication"]
+__all__ = ["defaults", "deduplication", "ASC", "DESC"]

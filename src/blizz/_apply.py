@@ -97,10 +97,10 @@ def _deduplicate(
         data: pandas.DataFrame = data
 
         if sort_on is not None:
-            # todo: sort
-            raise NotImplementedError(
-                f"sort_on/sort_order not implemented yet for deduplicate."
-            )
+            if not isinstance(sort_on, List):
+                sort_on = [sort_on]
+
+            data = data.sort_values(by=sort_on, ascending=sort_order == ASC)
 
         data = data.drop_duplicates(subset=key, keep="first")
         return data
