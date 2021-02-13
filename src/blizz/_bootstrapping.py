@@ -43,8 +43,9 @@ def data_source_definition_from_file(path: Path, table_name: str):
 
 
 def data_source_definition(
-    table_name: str,
     field_names: Iterable[str],
+    dataframe_type: str,
+    table_name: str = "BootstrappedTable",
     field_types: Iterable[str] = None,
     add_imports: bool = True,
 ) -> str:
@@ -67,9 +68,15 @@ def data_source_definition(
 
     if add_imports:
         imports = ""
+        imports += "import blizz.check\n"
         imports += "from blizz import Relation, Field\n"
-        imports += "from pyspark.sql import DataFrame\n"
-        imports += "from pyspark.sql.types import *\n"
+        if dataframe_type == "spark":
+            imports += "from pyspark.sql import DataFrame\n"
+            imports += "from pyspark.sql.types import *\n"
+        else:
+            imports += "import pandas as pd\n"
+            imports += "from pandas import DataFrame\n"
+
         class_string = imports + "\n\n" + class_string
 
     return class_string
@@ -77,7 +84,7 @@ def data_source_definition(
 
 def relation_from_dataframe(
     df: Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
-    name: Optional[str] = "",
+    name: Optional[str] = "BootstrappedTable",
     print_text: bool = True,
     add_imports: bool = True,
 ) -> Optional[str]:
@@ -85,15 +92,22 @@ def relation_from_dataframe(
     field_types = []
 
     if isinstance(df, pyspark.sql.DataFrame):
+        dataframe_type = "spark"
         for s in df.schema:
             field_names.append(s.name)
             field_types.append(str(s.dataType))
 
-    if isinstance(df, pandas.DataFrame):
-        pass
+    elif isinstance(df, pandas.DataFrame):
+        dataframe_type = "pandas"
+        for c in df.columns:
+            field_names.append(c)
+            field_types.append(f'"{df[c].dtype.name}"')
+    else:
+        raise ValueError(f"Unsupported df passed of type: {type(df)}")
 
     txt = data_source_definition(
         table_name=name,
+        dataframe_type=dataframe_type,
         field_names=field_names,
         field_types=field_types,
         add_imports=add_imports,
