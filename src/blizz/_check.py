@@ -9,13 +9,13 @@ from ._primitives import Relation, Type, is_pandas_df, is_pyspark_df
 
 try:
     import pyspark
-except ImportError:     # pragma: no cover
-    pyspark = None      # pragma: no cover
+except ImportError:  # pragma: no cover
+    pyspark = None  # pragma: no cover
 
 try:
     import pandas
-except ImportError:     # pragma: no cover
-    pandas = None       # pragma: no cover
+except ImportError:  # pragma: no cover
+    pandas = None  # pragma: no cover
 
 logger = logging.getLogger(__name__)
 
@@ -82,11 +82,11 @@ def _field_types(
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
     if is_pyspark_df(data, r):
         # todo: implement this for Spark
-        raise NotImplementedError
+        raise NotImplementedError("blizz.check.keys not yet implemented")
         pass
     elif is_pandas_df(data, r):
         # todo: implement this for Pandas
-        raise NotImplementedError
+        raise NotImplementedError("blizz.check.keys not yet implemented")
         pass
 
     logger.info(f"Relation {r.name()} has passed the key unqiue-ness check.")
@@ -157,7 +157,7 @@ def _run_check_and_handle_outcome(
         if on_fail == RAISE:
             raise error
         if on_fail == WARN:
-            warnings.warn(str(error))
+            warnings.warn(error.__repr__())
 
 
 def _verify_args(on_fail: str) -> None:
