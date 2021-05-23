@@ -58,7 +58,9 @@ def _field_types(
                             (t_column.datatype == spark_type)
                             or (
                                 inspect.isclass(t_column.datatype)
-                                and issubclass(t_column.datatype, pyspark.sql.types.DataType)
+                                and issubclass(
+                                    t_column.datatype, pyspark.sql.types.DataType
+                                )
                                 and t_column.datatype().simpleString() == spark_type
                             )
                         ):
@@ -86,9 +88,22 @@ def _field_types(
 
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
     if is_pyspark_df(data, r):
-        # todo: implement this for Spark
-        raise NotImplementedError("blizz.check.keys not yet implemented for PySpark")
-        pass
+        from pyspark.sql.functions import column, count
+
+        duplicated_rows = (
+            data.groupby(r.get_key_field_names())
+            .agg(count("*").alias("count"))
+            .filter(column("count") > 1)
+            .count()
+        )
+
+        if duplicated_rows > 0:
+            raise ValueError(
+                f"Key error for '{r.name()}': "
+                f"using keys '{r.get_key_field_names()}'"
+                f" there are {duplicated_rows} duplicates."
+            )
+
     elif is_pandas_df(data, r):
         duplicated = data[r.get_key_field_names()].duplicated()
         duplicated_rows = len(data[duplicated])

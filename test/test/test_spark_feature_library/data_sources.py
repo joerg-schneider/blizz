@@ -70,7 +70,7 @@ class StudentPerformance(Relation):
     This is the example data source "StudentPerformance" for testing.
     """
 
-    STUDENT_ID = Field(name="Student_ID", datatype=StringType)
+    STUDENT_ID = Field(name="Student_ID", datatype=StringType, key=True)
     SEMSTER_NAME = Field("Semster_Name", datatype=StringType)
     PAPER_ID = Field(name="Paper_ID", datatype=StringType)
     MARKS = Field(name="Marks", datatype=IntegerType)
