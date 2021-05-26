@@ -59,6 +59,23 @@ class Relation:
         return col_name_to_type
 
     @classmethod
+    def get_defined_field_renames(
+        cls
+    ) -> Dict["str", "str"]:
+        """
+        :return: Dictionary [str,str] from source field name to target field name
+        """
+        source_field_name_to_target = {
+            f.source_name: f.name
+            for f in cls.get_fields()
+            # check if "Field":
+            if "blizz._primitives.Field.__" in str(type(cls.get_fields()[0]))
+            and f.source_name is not None
+        }
+
+        return source_field_name_to_target
+
+    @classmethod
     def get_defined_key_fields(cls) -> List["Field"]:
         return [c for c in cls.get_fields() if c.key]
 
@@ -141,6 +158,7 @@ class Field(str):
     default: Any
     description: str
     key: bool
+    source_name: str
 
     def __new__(
         cls,
@@ -149,6 +167,7 @@ class Field(str):
         default: Any = None,
         description: str = None,
         key: bool = None,
+        source_name: str = None,
     ):
 
         description_ = description
@@ -156,6 +175,7 @@ class Field(str):
         default_ = default
         datatype_ = datatype
         key_ = key
+        source_name_ = source_name
 
         class Field_(str):
             @property
@@ -177,6 +197,10 @@ class Field(str):
             @property
             def name(self) -> str:
                 return name_
+
+            @property
+            def source_name(self) -> str:
+                return source_name_
 
         return Field_(name)
 

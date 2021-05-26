@@ -8,6 +8,7 @@ def test_relation():
 
         COL1 = Field("column1", datatype=int, key=True)
         COL2 = Field("column2", datatype=object, default="")
+        COL3 = Field("column3", source_name="column2")
 
         @classmethod
         def load(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
@@ -37,3 +38,5 @@ def test_relation():
     defined_types = MyTestRelation1.get_defined_types()
     print(defined_types)
     assert defined_types[MyTestRelation1.COL1] == int
+    defined_renames = MyTestRelation1.get_defined_field_renames()
+    assert defined_renames["column2"] == "column3"
