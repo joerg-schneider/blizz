@@ -19,7 +19,13 @@ on metadata
 
 then **blizz** is for you!
 # Installation
-Test installation:
+You can install the latest stable version of _blizz_ simply using Pip:
+
+``pip install blizz``
+
+Note, that either `pandas` or `pyspark` need to be installed manually.
+
+A test installation from the latest sources is possible as well:
 
 ``pip install git+https://github.com/joerg-schneider/blizz/#egg=blizz``
 
