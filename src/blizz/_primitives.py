@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 
 
 class Relation:
-    """ Base class to be inherited by all table definitions in the project."""
+    """ Base class to be inherited by all Relation definitions in the project."""
 
     # todo: improve docstrings and consistency in naming, e.g. fields vs column!!
 
@@ -29,7 +29,7 @@ class Relation:
         return cls.__name__
 
     # todo: for now, Relation just defines generic load, but Relation might be subclassed into
-    #       1) FileTable   2) SQLTable 3)...
+    #       1) FileRelation   2) SQLRelation 3)...
     #       where the load method is predefined and uses Relation properties that indicate
     #       the location!
     @classmethod
@@ -42,17 +42,18 @@ class Relation:
         pass
 
     @classmethod
-    # todo: evaluate datatype Field() here as opposed to str
     def get_defined_types(
         cls
-    ) -> Dict[str, Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]]:
+    ) -> Dict["Field", Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]]:
         """
         :return: Dictionary where a Field maps to the pandas/np/pySpark datatype
         """
         col_name_to_type = {
-            f.name: f.datatype
+            f: f.datatype
             for f in cls.get_fields()
-            if isinstance(f, Field) and f.datatype is not None
+            # check if "Field":
+            if "blizz._primitives.Field.__" in str(type(cls.get_fields()[0]))
+            and f.datatype is not None
         }
 
         return col_name_to_type
@@ -178,17 +179,6 @@ class Field(str):
                 return name_
 
         return Field_(name)
-
-
-class FieldRenames:
-    """ Holding a transformation dict of input field names to renamed fields"""
-
-    def __init__(self, input_to_used: dict):
-        self.input_to_used = input_to_used
-
-    @property
-    def used_to_input(self) -> dict:
-        return {val: key for key, val in self.input_to_used.items()}
 
 
 def check_dataframe_type(data: Any, relation: Optional[Type[Relation]]) -> str:

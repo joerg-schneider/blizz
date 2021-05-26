@@ -34,3 +34,6 @@ def test_relation():
 
     assert MyTestRelation1.get_defined_key_field_names() == [MyTestRelation1.COL1]
     assert MyTestRelation1.COL2.default == ""
+    defined_types = MyTestRelation1.get_defined_types()
+    print(defined_types)
+    assert defined_types[MyTestRelation1.COL1] == int
