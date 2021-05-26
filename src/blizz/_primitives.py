@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Union, Type, Dict, Any, Optional, List, Iterable
+from typing import Union, Type, Dict, Any, Optional, List, Iterable, Callable
 
 from blizz._helpers import pyspark, pandas
 
@@ -20,9 +20,26 @@ except ImportError:  # pragma: no cover
 
 
 class Relation:
-    """ Base class to be inherited by all Relation definitions in the project."""
+    """
+    Base class of all blizz Relation definitions. Relation definitions in blizz
+    are a core primitive capturing a Relation's Metadata through defining blizz Fields
+    on class level. A relation, in the computer scientific sense, refers here to any
+    table/dataframe/... one likes to define made up of rows and columns, the latter
+    defined by blizz Fields. DataFrames from PySpark and Pandas are the supported
+    means of capturing data instances to which a given Relation relates to.
 
-    # todo: improve docstrings and consistency in naming, e.g. fields vs column!!
+    To establish this link, each blizz Relation needs the abstract class method
+    ``Relation.load()`` to be implemented/overriden, which shall return
+    either a PySpark or Pandas dataframe.
+
+    Decorators of packages `blizz.check` and `blizz.apply` exist to coveniently
+    leverage the Relation's definition on the execution of `Relation.load()`.
+
+    These allow to respectively run check (for field existance, field types,
+    record duplication) and apply (field renames, field default values,
+    record deduplication) functions that can make use of the Relations
+    schema definition and metadata.
+    """
 
     @classmethod
     def name(cls) -> str:
@@ -35,10 +52,21 @@ class Relation:
     @classmethod
     @abstractmethod
     def load(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
+        """
+        Method loading a dataframe for the given Relation – to be implemented by each subclass
+        of `Relation`.
+        :return: a PySpark or Pandas Dataframe
+        """
         pass
 
     @classmethod
     def mock(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
+        """
+        Returns mock data for the given Relation – if needed, to be implemented by a
+        subclass of `Relation`
+        :return: a PySpark or Pandas Dataframe with mocked data
+         matching the Relation's schema
+        """
         pass
 
     @classmethod
@@ -46,7 +74,7 @@ class Relation:
         cls
     ) -> Dict["Field", Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]]:
         """
-        :return: Dictionary where a Field maps to the pandas/np/pySpark datatype
+        :return: Dictionary where a Field maps to the pandas/np/PySpark datatype
         """
         col_name_to_type = {
             f: f.datatype
@@ -59,9 +87,7 @@ class Relation:
         return col_name_to_type
 
     @classmethod
-    def get_defined_field_renames(
-        cls
-    ) -> Dict["str", "str"]:
+    def get_defined_field_renames(cls) -> Dict["str", "str"]:
         """
         :return: Dictionary [str,str] from source field name to target field name
         """
@@ -77,18 +103,35 @@ class Relation:
 
     @classmethod
     def get_defined_key_fields(cls) -> List["Field"]:
+        """
+        Returns all fields of this Relation defined as keys.
+        :return: a List of blizz Fields.
+        """
         return [c for c in cls.get_fields() if c.key]
 
     @classmethod
     def get_defined_key_field_names(cls) -> List[str]:
+        """
+        Returns all field names of this Relation defined as keys.
+        :return: a List of field names as strings.
+        """
         return [f.name for f in cls.get_defined_key_fields()]
 
     @classmethod
     def get_field_names(cls) -> List[str]:
+        """
+        Return all defined field names of this Relation.
+        :return: a List of strings with field names
+        """
         return [f.name for f in cls.get_fields()]
 
     @classmethod
     def get_fields(cls) -> List["Field"]:
+        """
+        Return all defined blizz Fields of this Relation.
+
+        :return: a List of blizz Fields
+        """
         return [
             getattr(cls, d)
             for d in dir(cls)
@@ -96,22 +139,12 @@ class Relation:
         ]
 
     @classmethod
-    def list_field_names_transformed_using_dict(
-        cls, transform_dict: dict
-    ) -> Iterable[str]:
-
-        out_list = []
-        for name in cls.get_field_names():
-            if transform_dict.get(name) is not None:
-                out_list = out_list + [transform_dict.get(name)]
-            else:
-                out_list = out_list + [name]
-
-        return out_list
-
-    @classmethod
     def get_default(cls, field: Union[str, "Field"]) -> Optional[Any]:
-        """ Get the default value for a field as defined in the Relation. """
+        """
+        Get the default row value for a Field as defined in this Relation.
+        :param field: the blizz Field or Field name to fetch
+        :return: the default row value as defined
+        """
         for col in cls.get_fields():
             if col.name == field:
                 return col.default
@@ -120,6 +153,11 @@ class Relation:
 
     @classmethod
     def get_defaults(cls) -> Dict["Field", Any]:
+        """
+        Get a mapping of all defined default row values for this Relation, where
+        the blizz Field maps to its defined default.
+        :return: a dictionary mapping from blizz Field to default value
+        """
         return {
             field: field.default
             for field in cls.get_fields()
@@ -152,13 +190,16 @@ class Relation:
 
 
 class Field(str):
-    # todo: add mock callable argument!
+    """ A blizz Field captures known metadata on a field which is part of
+    a blizz Relation.
+    """
     name: str
     datatype: Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]
     default: Any
     description: str
     key: bool
     source_name: str
+    mock: Callable[[], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]]
 
     def __new__(
         cls,
@@ -168,6 +209,9 @@ class Field(str):
         description: str = None,
         key: bool = None,
         source_name: str = None,
+        mock_func: Callable[
+            [], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
+        ] = None,
     ):
 
         description_ = description
@@ -176,6 +220,7 @@ class Field(str):
         datatype_ = datatype
         key_ = key
         source_name_ = source_name
+        mock_func_ = mock_func
 
         class Field_(str):
             @property
@@ -201,6 +246,12 @@ class Field(str):
             @property
             def source_name(self) -> str:
                 return source_name_
+
+            @property
+            def mock_func(
+                self
+            ) -> Callable[[], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]]:
+                return mock_func
 
         return Field_(name)
 
