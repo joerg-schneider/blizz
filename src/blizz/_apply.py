@@ -30,6 +30,7 @@ def deduplication(
     sort_on: List[Field] = None,
     sort_order: str = ASC,
 ):
+    """Apply deduplication to a loaded Blizz relation."""
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)
@@ -45,6 +46,7 @@ def deduplication(
 
 @doublewrap
 def defaults(original_func=None, *, fill: List[Field] = None):
+    """Apply default values to a loaded Blizz relation."""
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)
@@ -151,6 +153,7 @@ def _fill_defaults(
 
 @doublewrap
 def rename(original_func=None, *, renames: Dict[str, str] = None):
+    """Apply renames values to a loaded Blizz relation."""
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)

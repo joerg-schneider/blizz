@@ -94,6 +94,7 @@ def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFr
 
 @doublewrap
 def fields(original_func=None, *, on_fail: str = RAISE):
+    """ Check fields on a blizz Relation for existance. """
     _verify_args(on_fail)
 
     @functools.wraps(original_func)
@@ -112,6 +113,7 @@ def fields(original_func=None, *, on_fail: str = RAISE):
 
 @doublewrap
 def types(original_func=None, *, on_fail: str = RAISE):
+    """ Check datatypes on a blizz Relation. """
     _verify_args(on_fail)
 
     @functools.wraps(original_func)
@@ -129,6 +131,7 @@ def types(original_func=None, *, on_fail: str = RAISE):
 
 @doublewrap
 def keys(original_func=None, *, on_fail: str = RAISE):
+    """ Check keys on a blizz Relation. """
     _verify_args(on_fail)
 
     @functools.wraps(original_func)
