@@ -1,6 +1,7 @@
 blizz – _be blizzful_
 =====================
-effortless Python table schema management
+**effortless Python table schema management**
+
 
 If you are looking for…
 
