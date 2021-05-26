@@ -5,18 +5,18 @@ from blizz._helpers import pyspark, pandas
 
 try:
     import pyspark
-except ImportError:     # pragma: no cover
-    pyspark = None      # pragma: no cover
+except ImportError:  # pragma: no cover
+    pyspark = None  # pragma: no cover
 
 try:
     import pandas
-except ImportError:     # pragma: no cover
-    pandas = None       # pragma: no cover
+except ImportError:  # pragma: no cover
+    pandas = None  # pragma: no cover
 
 try:
     import numpy
-except ImportError:     # pragma: no cover
-    numpy = None        # pragma: no cover
+except ImportError:  # pragma: no cover
+    numpy = None  # pragma: no cover
 
 
 class Relation:
@@ -28,9 +28,9 @@ class Relation:
     def name(cls) -> str:
         return cls.__name__
 
-    # todo: for now, table just defines generic load, but Table might be subclassed into
+    # todo: for now, Relation just defines generic load, but Relation might be subclassed into
     #       1) FileTable   2) SQLTable 3)...
-    #       where the load method is predefined and uses Table properties that indicate
+    #       where the load method is predefined and uses Relation properties that indicate
     #       the location!
     @classmethod
     @abstractmethod

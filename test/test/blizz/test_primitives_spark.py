@@ -1,14 +1,11 @@
-from pathlib import Path
-
 from pyspark.sql import DataFrame, SparkSession
-from test.test_spark_feature_library.data_sources import Boston
+from test.test_spark_feature_library.data_sources import StudentCouncelingInformation
 
 
-def test_table(path_boston_test: Path, spark_session: SparkSession) -> None:
+def test_table(spark_session: SparkSession) -> None:
     """
-
-    :param path_boston_test:
+    # todo: docs
     :return:
     """
 
-    assert type(Boston.load()) == DataFrame
+    assert type(StudentCouncelingInformation.load()) == DataFrame

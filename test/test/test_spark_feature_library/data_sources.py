@@ -1,40 +1,129 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.types import DoubleType, IntegerType
-
+from pyspark.sql.types import DoubleType, IntegerType, StringType, DateType
+from pyspark.sql import functions as F
 import blizz.check
 from blizz import Relation, Field
-from test.conftest import path_to_test_data, get_or_create_spark_session
+from test.conftest import (
+    path_student_counceling_test,
+    path_student_performance_test,
+    path_employee_test,
+    path_department_test,
+    get_or_create_spark_session,
+)
 
 
-class Boston(Relation):
+class StudentCouncelingInformation(Relation):
     """
-    This is the example data source boston for testing.
+    This is the example data source "StudentCouncelingInformation" for testing.
     """
 
-    CRIM = Field(name="CRIM", datatype=DoubleType)
-    ZN = Field(name="ZN", datatype=DoubleType)
-    INDUS = Field(name="INDUS", datatype=DoubleType)
-    CHAS = Field(name="CHAS", datatype=IntegerType)
-    NOX = Field(name="NOX", datatype=DoubleType)
-    RM = Field(name="RM", datatype=DoubleType)
-    AGE = Field(name="AGE", datatype=DoubleType)
-    DIS = Field(name="DIS", datatype=DoubleType)
-    RAD = Field(name="RAD", datatype=IntegerType)
-    TAX = Field(name="TAX", datatype=IntegerType)
-    PTRATIO = Field(name="PTRATIO", datatype=DoubleType)
-    B = Field(name="B", datatype=DoubleType)
-    LSTAT = Field(name="LSTAT", datatype=DoubleType)
-    MEDV = Field(name="MEDV", datatype=DoubleType)
+    STUDENT_ID = Field(
+        name="Student_ID", datatype=StringType, description="The ID of the student"
+    )
+
+    DATE_OF_ADMISSION = Field(
+        "DOA", datatype=DateType, description="Date of admission to university."
+    )
+
+    DATE_OF_BIRTH = Field(
+        name="DOB", datatype=DateType, description="Student's birth date."
+    )
+
+    DEPARTMENT_CHOICES = Field(
+        name="Department_Choices",
+        datatype=StringType,
+        description="Choice of department a student submitted",
+    )
+
+    DEPARTMENT_ADMISSION = Field(
+        name="Department_Admission",
+        datatype=StringType,
+        description="Department where student got admitted",
+    )
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.check.types
+    def load(cls) -> DataFrame:
+        return (
+            get_or_create_spark_session()
+            .read.csv(
+                path=path_student_counceling_test().as_posix(),
+                inferSchema=True,
+                header=True,
+            )
+            .withColumn(
+                cls.DATE_OF_ADMISSION, F.expr(f"cast({cls.DATE_OF_ADMISSION} as date)")
+            )
+            .withColumn(cls.DATE_OF_BIRTH, F.expr(f"cast({cls.DATE_OF_BIRTH} as date)"))
+        )
+
+
+class StudentPerformance(Relation):
+    """
+    This is the example data source "StudentPerformance" for testing.
+    """
+
+    STUDENT_ID = Field(name="Student_ID", datatype=StringType)
+    SEMSTER_NAME = Field("Semster_Name", datatype=StringType)
+    PAPER_ID = Field(name="Paper_ID", datatype=StringType)
+    MARKS = Field(name="Marks", datatype=IntegerType)
 
     @classmethod
     @blizz.check.fields
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
-            path=path_to_test_data().joinpath("boston.csv").as_posix(),
+            path=path_student_performance_test().as_posix(),
             inferSchema=True,
             header=True,
         )
 
 
-__all__ = ["Boston"]
+class EmployeeInformation(Relation):
+    """
+    This is the example data source "EmployeeInformation" for testing.
+    """
+
+    EMPLOYEE_ID = Field(name="Employee ID", datatype=StringType)
+    DATE_OF_BIRTH = Field(
+        name="DOB", datatype=DateType, description="Employee's birth date."
+    )
+    DOJ = Field(name="DOJ", datatype=DateType, description="Date Of Joining")
+    DEPARTMENT_ID = Field(name="Department_ID", datatype=StringType)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.check.types
+    def load(cls) -> DataFrame:
+        return get_or_create_spark_session().read.csv(
+            path=path_employee_test().as_posix(), inferSchema=True, header=True
+        )
+
+
+class DepartmentInformation(Relation):
+    """
+    This is the example data source "DepartmentInformation" for testing.
+    """
+
+    DEPARTMENT_ID = Field(name="Department_ID", datatype=StringType)
+    DATE_OF_ESTABLISHMENT = Field(
+        name="DOE", datatype=DateType, description="Department Establishment Date"
+    )
+    DEPARTMENT_NAME = Field(name="Department_Name", datatype=StringType)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.check.types
+    def load(cls) -> DataFrame:
+        return get_or_create_spark_session().read.csv(
+            path=path_department_test().as_posix(), inferSchema=True, header=True
+        )
+
+
+__all__ = [
+    "StudentCouncelingInformation",
+    "StudentPerformance",
+    "EmployeeInformation",
+    "DepartmentInformation",
+]

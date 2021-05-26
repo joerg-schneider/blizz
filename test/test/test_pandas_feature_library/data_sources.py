@@ -1,35 +1,27 @@
 import pandas as pd
+from pandas import DataFrame
+
 import blizz.check
 from blizz import Relation, Field
-from test.conftest import path_to_test_data
+from test.conftest import path_student_performance_test
 import numpy as np
 
 
-class Boston(Relation):
+class StudentPerformance(Relation):
     """
-    This is the example data source boston for testing.
+    This is the example data source "StudentPerformance" for testing.
     """
 
-    CRIM = Field(name="CRIM", datatype=float)
-    ZN = Field(name="ZN", datatype=float)
-    INDUS = Field(name="INDUS", datatype=float)
-    CHAS = Field(name="CHAS", datatype=int)
-    NOX = Field(name="NOX", datatype=float)
-    RM = Field(name="RM", datatype=float)
-    AGE = Field(name="AGE", datatype=float)
-    DIS = Field(name="DIS", datatype=float)
-    RAD = Field(name="RAD", datatype=int)
-    TAX = Field(name="TAX", datatype=int)
-    PTRATIO = Field(name="PTRATIO", datatype=float)
-    B = Field(name="B", datatype=float)
-    LSTAT = Field(name="LSTAT", datatype=float)
-    MEDV = Field(name="MEDV", datatype=float)
+    STUDENT_ID = Field(name="Student_ID", datatype=object)
+    SEMSTER_NAME = Field("Semster_Name", datatype=object)
+    PAPER_ID = Field(name="Paper_ID", datatype=object)
+    MARKS = Field(name="Marks", datatype=int)
 
     @classmethod
     @blizz.check.fields
     @blizz.check.types
-    def load(cls) -> pd.DataFrame:
-        return pd.read_csv(path_to_test_data().joinpath("boston.csv").as_posix())
+    def load(cls) -> DataFrame:
+        return pd.read_csv(path_student_performance_test().as_posix())
 
 
-__all__ = ["Boston"]
+__all__ = ["StudentPerformance"]

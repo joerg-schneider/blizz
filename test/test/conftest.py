@@ -10,9 +10,20 @@ def path_to_test_data() -> Path:
     return Path(os.path.dirname(__file__)).joinpath(os.pardir, "data")
 
 
-@pytest.fixture
-def path_boston_test() -> Path:
-    return path_to_test_data().joinpath("boston.csv").absolute()
+def path_department_test() -> Path:
+    return path_to_test_data().joinpath("Department_Information.csv").absolute()
+
+
+def path_employee_test() -> Path:
+    return path_to_test_data().joinpath("Employee_Information.csv").absolute()
+
+
+def path_student_counceling_test() -> Path:
+    return path_to_test_data().joinpath("Student_Counceling_Information.csv").absolute()
+
+
+def path_student_performance_test() -> Path:
+    return path_to_test_data().joinpath("Student_Performance_Data.csv.gz").absolute()
 
 
 @pytest.fixture

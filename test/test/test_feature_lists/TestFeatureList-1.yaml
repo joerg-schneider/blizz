@@ -1,18 +1,19 @@
 feature-groups:
-  -   name: MyFeatureGroup
+  -   name: StudentFeatureGroup
 #      pre-filter: ""
 #      post-filter: ""
 
       features:
-      - name: MyFeature3
-      - name: MyFeature4
+      - name: StudentMarksScaled
+      - name: StudentMarksAverage
+      - name: ScaleMarksByFactor
         parameters:
           - name-suffix: _times_{factor}
             grid:
               factor: [0,1]
 
       passthrough:
-        - RAD
+        - STUDENT_ID
 
 output:
   format: csv
