@@ -1,6 +1,6 @@
 import functools
 import logging
-from typing import List, Union
+from typing import List, Union, Dict
 
 from blizz import _inspect, Field
 from blizz._helpers import doublewrap
@@ -147,3 +147,53 @@ def _fill_defaults(
         return data
 
     logger.info(f"Applied default values to NAs in {r.name()}.")
+
+
+@doublewrap
+def rename(original_func=None, *, renames: Dict[str, str] = None):
+    @functools.wraps(original_func)
+    def _decorated(*args, **kwargs):
+        relation = _inspect.get_class_that_defined_method(original_func)
+        assert relation is not None
+        res = original_func(*args, **kwargs)
+        res = _rename_fields(r=relation, data=res, renames=renames)
+        return res
+
+    return _decorated
+
+
+def _rename_fields(
+    r: Type[Relation],
+    data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
+    renames: Dict[str, str] = None,
+) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
+
+    if renames is None:
+        renames = dict()
+
+    defined_renames_on_relation = r.get_defined_field_renames()
+    all_renames: Dict[str, str] = dict()
+    all_renames.update(defined_renames_on_relation)
+    all_renames.update(renames)
+
+    cant_rename = {
+        source_field_name
+        for source_field_name in all_renames.keys()
+        if source_field_name not in data.columns
+    }
+
+    if cant_rename:
+        raise ValueError(f"Cannot rename {cant_rename} – not in loaded DataFrame.")
+
+    if is_pyspark_df(data, r):
+        data: pyspark.sql.DataFrame = data
+        for from_field_name, to_field_name in all_renames.items():
+            data = data.withColumnRenamed(from_field_name, to_field_name)
+        return data
+
+    elif is_pandas_df(data, r):
+        data: pandas.DataFrame = data
+        data = data.rename(columns=all_renames)
+        return data
+
+    logger.info(f"Applied the following field renames: {all_renames} to {r.name()}.")

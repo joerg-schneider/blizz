@@ -204,3 +204,51 @@ def test_apply_dedup_sort() -> None:
     assert TestApplyDedupSort.load().equals(
         pd.DataFrame(data={"name": ["Tom", "Mike"], "age": [5, 25]})
     )
+
+
+class TestApplyRenameThroughField(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name_renamed", source_name="name")
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication
+    @blizz.apply.rename
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, 31]})
+
+
+def test_apply_rename_through_field() -> None:
+    """
+    """
+
+    assert "name_renamed" in TestApplyRenameThroughField.load().columns
+
+
+class TestApplyRenameThroughArg(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name_renamed")
+    AGE = Field(name="age", default=20)
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.apply.defaults
+    @blizz.apply.deduplication
+    @blizz.apply.rename(renames={"name": "name_renamed"})
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, 31]})
+
+
+def test_apply_rename_through_arg() -> None:
+    """
+    """
+
+    assert "name_renamed" in TestApplyRenameThroughArg.load().columns
