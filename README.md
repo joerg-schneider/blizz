@@ -368,7 +368,7 @@ All `blizz.check` decorators accept the argument `on_fail`, which can be set to:
   decorator supports the arguments `sort_on:List[str]` and `sort_order` (which can be either `blizz.apply.ASC` or 
   `blizz.apply.DESC`) – this can ensure which non-key records are preferrably kept on duplication. E.g. when you
   find a duplicate based on the key-column, then pick among those duplicates the most recently updated row 
-  – here one might use something like: `sort_on = ["update_timestamp"], sort_order = blizz.apply.DESC`).
+  – here one might use something like: `sort_on = ["update_timestamp"], sort_order = blizz.apply.DESC`.
 - `blizz.apply.defaults`: fill defined defaults for NULL values in the DataFrame returned by `load()`, either
   using the defined value defaults from the Relation's Fields (if exist) or as given with as the argument
   `fill: List[str]` to the decorator (which has precedence).
