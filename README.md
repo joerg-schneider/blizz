@@ -18,6 +18,20 @@ refactoring and debugging productivity
 on metadata
 
 then **blizz** is for you!
+
+**Contents:**
+
+- [Installation](#installation)
+- [Usage Tutorial](#usage-tutorial)
+    - [blizz primitives: Relation and Field](#blizz-primitives-relation-and-field)
+        - [Basic usage with pandas](#basic-usage-with-pandas)
+        - [Using field definitions](#using-field-definitions-inside-of-load)
+        - [Defining metadata properties](#defining-metadata-properties-on-field)
+        - [Relation Hierarchies](#relation-hierarchies)
+    - [Making use of metadata declarations: blizz.check & blizz.apply](#making-use-of-metadata-declarations-blizzcheck--blizzapply)
+    - [Using blizz with Pyspark](#using-blizz-with-pyspark)
+    - [API Reference on Relation and Field](#api-reference-on-relation-and-field)
+    
 # Installation
 You can install the latest stable version of _blizz_ simply using Pip:
 
@@ -242,6 +256,55 @@ In this use case, your decorators have to be defined in this order (lowest one r
         pass
 ```
 
+### Using blizz with PySpark
+
+Using _blizz_ with PySpark works very similarly to the examples shown above – the only difference
+lies in using different datatypes for _Field_ definitions (either instances of `pyspark.sql.types.DataType`
+or the PySpark datatypes `simpleString` representation (e.g. "int", "string", ...)), and of course
+having to implement `load()` on each Relation differently, to return a `pyspark.sql.DataFrame`:
+
+```python
+from pyspark import SparkFiles
+from blizz import Relation, Field
+from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
+from pyspark.sql.types import DoubleType
+import blizz.check
+
+
+class Iris(Relation):
+    SEPAL_LENGTH = Field("sepal_length", datatype=DoubleType)
+    SEPAL_WIDTH = Field("sepal_width", datatype="double")
+    PETAL_LENGTH = Field("petal_length", datatype=DoubleType)
+    PETAL_WIDTH = Field("petal_width", datatype=DoubleType)
+    SPECIES = Field("species", datatype="string")
+
+    @classmethod
+    @blizz.check.types
+    @blizz.check.fields
+    def load(cls, spark_session) -> DataFrame:
+
+        spark_session.sparkContext.addFile(
+            "https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7"
+            "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
+        )
+        df = spark_session.read.csv(
+            SparkFiles.get("iris.csv"), inferSchema=True, header=True
+        )
+
+        return df
+
+
+# set up a simple spark session:
+spark = SparkSession.builder.getOrCreate()
+# calling load(), we can retrieve a dataframe for the Relation:
+iris_df = Iris.load(spark)
+print(iris_df)
+# using the Relation's Schema, we can access/modify iris_df referencing fields we like:
+iris_df.select(Iris.SEPAL_WIDTH, Iris.SEPAL_LENGTH).show()
+spark.stop()
+```
+
 ### API Reference on Relation and Field
 
 The `Field()` constructor accepts the following arguments (besides `name`, all optional):
@@ -277,4 +340,3 @@ deals with common use-cases by own class functions it adds! For instance, you mi
 a `SQLRelation` which already bundles useful methods or definitions to allow you quickling 
 retrieving these kind of Relations from a SQL RDBMS.
 
-# FAQs

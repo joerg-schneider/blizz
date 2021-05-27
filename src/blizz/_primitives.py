@@ -51,7 +51,7 @@ class Relation:
     #       the location!
     @classmethod
     @abstractmethod
-    def load(cls) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
+    def load(cls, *args, **kwargs) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
         """
         Method loading a dataframe for the given Relation – to be implemented by each subclass
         of `Relation`.

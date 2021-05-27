@@ -1,4 +1,5 @@
 import functools
+import inspect
 import logging
 import warnings
 from typing import Union
@@ -53,13 +54,17 @@ def _field_types(
             if t_column.name in data.columns:
                 if t_column.datatype is not None:
                     for spark_name, spark_type in data.dtypes:
-                        if (
-                            spark_name == t_column.name
-                            and t_column.datatype().simpleString() != spark_type
+                        if spark_name == t_column.name and not (
+                            (t_column.datatype == spark_type)
+                            or (
+                                inspect.isclass(t_column.datatype)
+                                and issubclass(t_column.datatype, pyspark.sql.types.DataType)
+                                and t_column.datatype().simpleString() == spark_type
+                            )
                         ):
                             raise ValueError(
                                 f"Type error for '{r.name()}.{t_column.name}': "
-                                f"got: {spark_type}, expected: {t_column.datatype().simpleString()}"
+                                f"got: {spark_type}, expected: {t_column.datatype}"
                             )
 
     elif is_pandas_df(data, r):
