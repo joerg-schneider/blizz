@@ -251,7 +251,7 @@ class Field(str):
             def mock_func(
                 self
             ) -> Callable[[], Any]:
-                return mock_func
+                return mock_func_
 
         return Field_(name)
 
