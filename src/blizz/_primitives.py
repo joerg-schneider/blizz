@@ -199,7 +199,7 @@ class Field(str):
     description: str
     key: bool
     source_name: str
-    mock: Callable[[], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]]
+    mock: Callable[[], Any]
 
     def __new__(
         cls,
@@ -210,7 +210,7 @@ class Field(str):
         key: bool = None,
         source_name: str = None,
         mock_func: Callable[
-            [], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
+            [], Any
         ] = None,
     ):
 
@@ -250,7 +250,7 @@ class Field(str):
             @property
             def mock_func(
                 self
-            ) -> Callable[[], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]]:
+            ) -> Callable[[], Any]:
                 return mock_func
 
         return Field_(name)
