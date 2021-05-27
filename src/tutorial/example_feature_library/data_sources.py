@@ -1,21 +1,25 @@
-from pyspark.sql import DataFrame
-from pyspark.sql.types import (
-    DoubleType,
-    IntegerType,
-    StringType,
-    DateType,
-    TimestampType,
-)
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.types import DoubleType, IntegerType, StringType, DateType
 from pyspark.sql import functions as F
 import blizz.check
 from blizz import Relation, Field
-from test.conftest import (
-    path_student_counceling_test,
-    path_student_performance_test,
-    path_employee_test,
-    path_department_test,
-    get_or_create_spark_session,
-)
+import os
+
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+PATH_TEST_DATA = os.path.join(CURRENT_DIR, os.pardir, os.pardir, "test/data")
+
+
+def get_or_create_spark_session() -> SparkSession:
+    """
+    Create and/or retrieve an Apache Spark Session.
+    :return: a live Spark Session
+    """
+    spark = SparkSession.builder.getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
+    log4j = spark._jvm.org.apache.log4j
+    logger = log4j.LogManager.getLogger("ERROR")
+
+    return spark
 
 
 class StudentCouncelingInformation(Relation):
@@ -54,7 +58,7 @@ class StudentCouncelingInformation(Relation):
         return (
             get_or_create_spark_session()
             .read.csv(
-                path=path_student_counceling_test().as_posix(),
+                path=os.path.join(PATH_TEST_DATA, "Student_Counceling_Information.csv"),
                 inferSchema=True,
                 header=True,
             )
@@ -80,7 +84,7 @@ class StudentPerformance(Relation):
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
-            path=path_student_performance_test().as_posix(),
+            path=os.path.join(PATH_TEST_DATA, "Student_Performance_Data.csv.gz"),
             inferSchema=True,
             header=True,
         )
@@ -103,7 +107,9 @@ class EmployeeInformation(Relation):
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
-            path=path_employee_test().as_posix(), inferSchema=True, header=True
+            path=os.path.join(PATH_TEST_DATA, "Employee_Information.csv"),
+            inferSchema=True,
+            header=True,
         )
 
 
@@ -114,7 +120,7 @@ class DepartmentInformation(Relation):
 
     DEPARTMENT_ID = Field(name="Department_ID", datatype=StringType)
     DATE_OF_ESTABLISHMENT = Field(
-        name="DOE", datatype=TimestampType, description="Department Establishment Date"
+        name="DOE", datatype=DateType, description="Department Establishment Date"
     )
     DEPARTMENT_NAME = Field(name="Department_Name", datatype=StringType)
 
@@ -123,7 +129,9 @@ class DepartmentInformation(Relation):
     @blizz.check.types
     def load(cls) -> DataFrame:
         return get_or_create_spark_session().read.csv(
-            path=path_department_test().as_posix(), inferSchema=True, header=True
+            path=os.path.join(PATH_TEST_DATA, "Department_Information.csv"),
+            inferSchema=True,
+            header=True,
         )
 
 

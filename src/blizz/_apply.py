@@ -31,6 +31,7 @@ def deduplication(
     sort_order: str = ASC,
 ):
     """Apply deduplication to a loaded Blizz relation."""
+
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)
@@ -47,6 +48,7 @@ def deduplication(
 @doublewrap
 def defaults(original_func=None, *, fill: List[Field] = None):
     """Apply default values to a loaded Blizz relation."""
+
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)
@@ -152,14 +154,15 @@ def _fill_defaults(
 
 
 @doublewrap
-def rename(original_func=None, *, renames: Dict[str, str] = None):
+def renames(original_func=None, *, columns: Dict[str, str] = None):
     """Apply renames values to a loaded Blizz relation."""
+
     @functools.wraps(original_func)
     def _decorated(*args, **kwargs):
         relation = _inspect.get_class_that_defined_method(original_func)
         assert relation is not None
         res = original_func(*args, **kwargs)
-        res = _rename_fields(r=relation, data=res, renames=renames)
+        res = _rename_fields(r=relation, data=res, columns=columns)
         return res
 
     return _decorated
@@ -168,16 +171,16 @@ def rename(original_func=None, *, renames: Dict[str, str] = None):
 def _rename_fields(
     r: Type[Relation],
     data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
-    renames: Dict[str, str] = None,
+    columns: Dict[str, str] = None,
 ) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
 
-    if renames is None:
-        renames = dict()
+    if columns is None:
+        columns = dict()
 
     defined_renames_on_relation = r.get_field_renames()
     all_renames: Dict[str, str] = dict()
     all_renames.update(defined_renames_on_relation)
-    all_renames.update(renames)
+    all_renames.update(columns)
 
     cant_rename = {
         source_field_name
@@ -186,7 +189,7 @@ def _rename_fields(
     }
 
     if cant_rename:
-        raise ValueError(f"Cannot rename {cant_rename} – not in loaded DataFrame.")
+        raise ValueError(f"Cannot renames {cant_rename} – not in loaded DataFrame.")
 
     if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data

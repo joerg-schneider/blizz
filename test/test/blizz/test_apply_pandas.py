@@ -218,7 +218,7 @@ class TestApplyRenameThroughField(Relation):
     @blizz.check.fields
     @blizz.apply.defaults
     @blizz.apply.deduplication
-    @blizz.apply.rename
+    @blizz.apply.renames
     def load(cls) -> pd.DataFrame:
         return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, 31]})
 
@@ -242,7 +242,7 @@ class TestApplyRenameThroughArg(Relation):
     @blizz.check.fields
     @blizz.apply.defaults
     @blizz.apply.deduplication
-    @blizz.apply.rename(renames={"name": "name_renamed"})
+    @blizz.apply.renames(columns={"name": "name_renamed"})
     def load(cls) -> pd.DataFrame:
         return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"], "age": [5, 31, 31]})
 

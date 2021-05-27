@@ -12,10 +12,12 @@ If you are looking for…
 
 :snowflake: …which allows dynamic schema inheritance/reference, to express several levels of derived data assets –
 as common in stable data pipelines – tracing the full data field lineage across your project and boosting
-refactoring and debugging productivity
+refactoring and debugging productivity,
 
-:rocket: …which offers pre-built PySpark & Pandas decorators for most common checks & transformations – all based
-on metadata
+:rocket: …which offers pre-built PySpark & Pandas decorators for most common data checks & transformations – all based
+on metadata,
+
+:running: …which gives supports your workflow with boostrapping tools to generate basic code and Sphinx documentations
 
 then **blizz** is for you!
 
@@ -31,7 +33,9 @@ then **blizz** is for you!
         - [Making use of metadata declarations: blizz.check & blizz.apply](#making-use-of-metadata-declarations-blizzcheck--blizzapply)
         - [Using blizz with Pyspark](#using-blizz-with-pyspark)
         - [API Reference on Relation and Field](#api-reference-on-relation-and-field)
-    - [blizz Feature Store](#blizz-feature-library)
+        - [API Reference on blizz.check & blizz.apply](#api-reference-on-blizzcheck--blizzapply)
+    - [Boostrapping – generate schema definitions from DataFrames](#bootstrapping--generate-schema-definitions-from-dataframes)    
+    - [Beyond: blizz Feature Store](#blizz-feature-library)
     
 # Installation
 You can install the latest stable version of _blizz_ simply using Pip:
@@ -316,7 +320,7 @@ The `Field()` constructor accepts the following arguments (besides `name`, all o
   you want to retrieve an originally differently name field, then capture its source name in 
   `source_name`
 - `source_name`: the field name as in the source – useful for `load()` to retrieve the Relation,
-  before fields get renamed – such renaming can be done by `blizz.apply.rename`
+  before fields get renamed – such renaming can be done by `blizz.apply.renames`
 - `datatype`: the Field's datatype – for Pandas, can be defined as Python built-in, numpy type, or
   as a String value ("int"). For PySpark, use `pyspark.sql.types.DataType` or the PySpark datatypes
   `simpleString` representation (e.g. "int", "string", ...).
@@ -343,6 +347,77 @@ deals with common use-cases by own class functions it adds! For instance, you mi
 a `SQLRelation` which already bundles useful methods or definitions to allow you quickling 
 retrieving these kind of Relations from a SQL RDBMS.
 
-## blizz Feature Library
+### API Reference on blizz.check & blizz.apply
+
+`blizz.check` offers the following decorators for checking:
+
+- `blizz.check.fields`: validates on the DataFrame returned by `load()`, that it contains at least all fields 
+  (by name) as defined on the Relation
+- `blizz.check.types`: validates that all fields that have defined data types on the Relation match with their
+  data types as in the DataFrame returned by `load()`
+- `blizz.check.keys`: validates that the subset of all Fields marked as keys is unique
+
+All `blizz.check` decorators accept the argument `on_fail`, which can be set to:
+- `blizz.check.WARN`: raise a warning on failing the check
+- `blizz.check.RAISE`: raise an exception on failing the check
+
+`blizz.apply` offers the following decorators for transformations:
+- `blizz.apply.deduplication`: deduplicate the DataFrame returned by `load()` either by the Fields already marked
+  as keys of the Relation, or the subset of Field given as argument `key:List[str]` to the decorator (which
+  has precedence). Additionally the
+  decorator supports the arguments `sort_on:List[str]` and `sort_order` (which can be either `blizz.apply.ASC` or 
+  `blizz.apply.DESC`) – this can ensure which non-key records are preferrably kept on duplication. E.g. when you
+  find a duplicate based on the key-column, then pick among those duplicates the most recently updated row 
+  – here one might use something like: `sort_on = ["update_timestamp"], sort_order = blizz.apply.DESC`).
+- `blizz.apply.defaults`: fill defined defaults for NULL values in the DataFrame returned by `load()`, either
+  using the defined value defaults from the Relation's Fields (if exist) or as given with as the argument
+  `fill: List[str]` to the decorator (which has precedence).
+- `blizz.apply.renames`: perform Field renames for columns in the DataFrame as returned by `load()`, either
+  using the defined pairs of `Field.source_name` -> `Field.name` (where exists) or using the rename definitions
+  as given as argument `columns:Dict[str,str]` to the decorator, which will be added to the renames to perform.
+
+
+## Bootstrapping – generate schema definitions from DataFrames
+
+As you've seen above, _blizz_ can be a powerful tool in your Python data pipelines. However it needs properly
+defined Relations, which can be tedious at the start.
+
+For this, _blizz_ can boostrap Relations from existing PySpark or Pandas DataFrames using 
+`blizz.relation_from_dataframe()`.
+
+```shell
+>>> blizz.relation_from_dataframe(df=departments_df, name="Departments")
+
+import blizz.check
+from blizz import Relation, Field
+from pyspark.sql import DataFrame
+from pyspark.sql.types import *
+
+
+class Departments(Relation):
+    """
+    todo: describe relation Departments in this docstring
+    """
+    DEPARTMENT_ID = Field(name="Department_ID", datatype=StringType)
+    DEPARTMENT_NAME = Field(name="Department_Name", datatype=StringType)
+    DOE = Field(name="DOE", datatype=TimestampType)
+
+    @classmethod
+    @blizz.check.keys(on_fail = blizz.check.WARN)
+    @blizz.check.types(on_fail = blizz.check.WARN)
+    @blizz.check.fields(on_fail = blizz.check.WARN)
+    def load(cls) -> DataFrame:
+        """
+        todo: describe relation Departments load process in this docstring
+        """
+        # todo: implement data source loading here
+        pass
+```
+
+You can then simply copy and paste and adjust this as needed.
+
+## Beyond: blizz Feature Library
 **EXPERIMENTAL – only supported with PySpark**
 
+On top of __blizz__'s primitives, the plan is to build a lightweight Feature Library component for
+Machine Learning.

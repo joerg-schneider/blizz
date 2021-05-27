@@ -129,7 +129,7 @@ class FeatureGroup(ABC):
                     if isinstance(aggregation_level[0], Field):
                         aggregation_level = [f.name for f in aggregation_level]
 
-                # rename non-key column to target name
+                # renames non-key column to target name
                 non_key_cols = set(computed_feature.columns).difference(
                     aggregation_level
                 )
