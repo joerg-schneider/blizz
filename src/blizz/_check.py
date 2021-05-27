@@ -82,12 +82,18 @@ def _field_types(
 def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]):
     if is_pyspark_df(data, r):
         # todo: implement this for Spark
-        raise NotImplementedError("blizz.check.keys not yet implemented")
+        raise NotImplementedError("blizz.check.keys not yet implemented for PySpark")
         pass
     elif is_pandas_df(data, r):
-        # todo: implement this for Pandas
-        raise NotImplementedError("blizz.check.keys not yet implemented")
-        pass
+        duplicated = data[r.get_defined_key_field_names()].duplicated()
+        duplicated_rows = len(data[duplicated])
+
+        if duplicated_rows > 0:
+            raise ValueError(
+                f"Key error for '{r.name()}': "
+                f"using keys '{r.get_defined_key_field_names()}'"
+                f" there are {duplicated_rows} duplicates."
+            )
 
     logger.info(f"Relation {r.name()} has passed the key unqiue-ness check.")
 
