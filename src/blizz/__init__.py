@@ -1,5 +1,5 @@
 """
-blizz – if you need features, you came to the right place!
+blizz – be blizzful.
 """
 
 import logging as __logging

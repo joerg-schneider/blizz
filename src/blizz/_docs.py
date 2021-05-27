@@ -118,8 +118,8 @@ Feature Definition
                 feature_template.format(
                     name=f.name(),
                     description=f.__doc__,
-                    agg_level="Not defined",
-                    parameters="Not defined",
+                    agg_level=make_aggregation_level_block(f),
+                    parameters=make_parameters_block(f),
                     feature_code=inspect.getsource(f.compute).lstrip(),
                 )
                 for f in features
@@ -136,6 +136,36 @@ Feature Definition
             ),
             feature_section=_make_features_section(features=fg_in.get_features()),
         )
+
+
+def make_aggregation_level_block(feat_in: Type[Feature]) -> str:
+    if hasattr(feat_in, "aggregation_level"):
+        aggregation_level = feat_in.aggregation_level
+        if isinstance(aggregation_level, str):
+            aggregation_level = [aggregation_level]
+        elif isinstance(aggregation_level, Field):
+            aggregation_level = [aggregation_level.name]
+        elif isinstance(aggregation_level, Iterable):
+            aggregation_level = list(aggregation_level)
+            # check if "Field" type was used, if so, convert to string
+            if isinstance(aggregation_level[0], Field):
+                aggregation_level = [f.name for f in aggregation_level]
+
+        return ",".join([col.name for col in aggregation_level])
+    return "Not defined."
+
+
+def make_parameters_block(feat_in: Type[Feature]) -> str:
+    if hasattr(feat_in, "Parameters"):
+        members = [
+            getattr(feat_in.Parameters,attr)
+            for attr in dir(feat_in.Parameters)
+            if not callable(getattr(feat_in.Parameters, attr))
+            and not attr.startswith("__")
+        ]
+        return ",".join(members)
+
+    return "Not defined."
 
 
 def relation_to_rst(st_in: Type[Relation]) -> str:
@@ -195,17 +225,3 @@ def _field_type_to_string(in_type: Any) -> str:
         return in_type().simpleString()
 
     return str(in_type)
-
-
-if __name__ == "__main__":
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_dir = Path(temp_dir)
-        create_sphinx_html(
-            source_dir=Path(
-                "/Users/schneiderjoerg/"
-                "Projekte/blizz/test/test/"
-                "test_feature_library"
-            ),
-            target_dir=temp_dir,
-        )
-        serve_sphinx_html(temp_dir.joinpath("html"))

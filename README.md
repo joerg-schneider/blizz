@@ -35,7 +35,8 @@ then **blizz** is for you!
         - [API Reference on Relation and Field](#api-reference-on-relation-and-field)
         - [API Reference on blizz.check & blizz.apply](#api-reference-on-blizzcheck--blizzapply)
     - [Boostrapping – generate schema definitions from DataFrames](#bootstrapping--generate-schema-definitions-from-dataframes)    
-    - [Beyond: blizz Feature Store](#blizz-feature-library)
+    - [Beyond: blizz Feature Store](#beyond-blizz-feature-library)
+    - [Beyond: Generate Documentation](#beyond-generate-documentation)
     
 # Installation
 You can install the latest stable version of _blizz_ simply using Pip:
@@ -420,4 +421,67 @@ You can then simply copy and paste and adjust this as needed.
 **EXPERIMENTAL – only supported with PySpark**
 
 On top of __blizz__'s primitives, the plan is to build a lightweight Feature Library component for
-Machine Learning.
+Machine Learning. There is an example of this experimental API included as part of
+[src/tutorial](src/tutorial/example_feature_library). Conceptually the API allows to express 
+features programmatically, but in a well structured way using lightweight classes. This makes it 
+possible then, to decouple the feature generation from the pure feature definition.
+
+`blizz` has also a CLI – serving as a client to instruct a PySpark process which features to build,
+all based on a defined blizz Feature Library.
+
+In order to do this, one:
+
+1. defines a Feature Library in code as done with
+   [src/tutorial/example_feature_library](src/tutorial/example_feature_library)
+2. defines a feature list definition: this is a YAML file of all FeatureGroups/Features one wants to
+   have calculated, being also able to specify parameters for parameterizable features and to
+   specify the output storage format. An example is given here
+   [src/tutorial/ExampleFeatureList.yaml](src/tutorial/ExampleFeatureList.yaml)
+3. calls the `blizz` CLI with both and the output path: 
+   `blizz build src/tutorial/ExampleFeatureList.yaml src/tutorial/example_feature_library my_features`
+
+This brings together the code-based definition of all data sources (by __blizz__ primitives) and features (by __blizz__ 
+FeatureGroup & Feature) with the instruction in the form of the YAML file what and how (parameterized features)
+to calculate.
+
+**Why is this approach powerful?**
+
+1. how to retrieve data sources, check them, and build features on-top is purely captured in code. This means it
+  is **fully supported by IDE type checks, autocompletion and refactoring abilities.**
+2. due to this code centric means of definition, the **whole end to end pipeline is easily managed and versioned** – 
+   as a Python package.
+3. expressing ML features in a structured way allows to leverage a **common, powerful Spark based factory** to build 
+   them – whoever wants features, only needs to call `blizz build ...` with their YAML build instructions and
+   pointing to a blizz Feature Library codebase (which can be checked out at a version as desired). As internally,
+   _blizz_ pipelines are just nested function calls on top of `pyspark.sql`, this **heavily benefits from both
+   lazy evaluation and execution plan optimizations**. This happens completely transparently thanks to Spark.
+4. in this way, definitions to calculate features can be centralized and shared purely on the code level. Consumers
+   of features, e.g. specialized ML models, just need to install `blizz`, write YAML build instructions and point
+   to the FeatureLibrary – **their model does not even need to be in Python**.
+
+## Beyond: Generate Documentation
+
+Thanks to its rich metadata about Relations, Fields and Features, the task of documentation becomes easier
+for data practitioners. On top of structured information serving as documentation, Python docstrings will
+be automatically used, e.g. on class level underneath a `Relation`, when describing `Relation.load()` and
+similarly for `FeatureGroup` and `Feature`.
+
+The philosophy here is, not write documentation twice – e.g. in code and somewhere else – but rather to
+make it code driven as well.
+
+A nice (experimental) feature is the following, which will create a Sphinx project from a `blizz.FeatureGroup`'s
+metadata and serve it:
+
+```shell
+blizz docs src/tutorial/example_feature_library --serve
+```
+
+Here are some impressions, how these generated docs pages look like:
+
+![docs on relations](docs/static/docs_html_relations.png "Relations")
+
+![docs on features](docs/static/docs_html_features.png "Features")
+
+As you can see, this also creates a nice searchable index over all interesting information and metadata, as a
+kind of catalog of your end to end data pipelines
+

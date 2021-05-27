@@ -6,7 +6,7 @@ from blizz import Relation, Field
 import os
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-PATH_TEST_DATA = os.path.join(CURRENT_DIR, os.pardir, os.pardir, "test/data")
+PATH_TEST_DATA = os.path.join(CURRENT_DIR, os.pardir,os.pardir, os.pardir, "test/data")
 
 
 def get_or_create_spark_session() -> SparkSession:
@@ -24,11 +24,14 @@ def get_or_create_spark_session() -> SparkSession:
 
 class StudentCouncelingInformation(Relation):
     """
-    This is the example data source "StudentCouncelingInformation" for testing.
+    This is the example data source "StudentCouncelingInformation" of the tutorial.
     """
 
     STUDENT_ID = Field(
-        name="Student_ID", datatype=StringType, description="The ID of the student"
+        name="Student_ID",
+        datatype=StringType,
+        description="The ID of the student",
+        key=True,
     )
 
     DATE_OF_ADMISSION = Field(
@@ -71,7 +74,7 @@ class StudentCouncelingInformation(Relation):
 
 class StudentPerformance(Relation):
     """
-    This is the example data source "StudentPerformance" for testing.
+    This is the example data source "StudentPerformance" of the tutorial.
     """
 
     STUDENT_ID = Field(name="Student_ID", datatype=StringType)
@@ -92,7 +95,7 @@ class StudentPerformance(Relation):
 
 class EmployeeInformation(Relation):
     """
-    This is the example data source "EmployeeInformation" for testing.
+    This is the example data source "EmployeeInformation" of the tutorial.
     """
 
     EMPLOYEE_ID = Field(name="Employee ID", datatype=StringType)
@@ -115,7 +118,7 @@ class EmployeeInformation(Relation):
 
 class DepartmentInformation(Relation):
     """
-    This is the example data source "DepartmentInformation" for testing.
+    This is the example data source "DepartmentInformation" of the tutorial.
     """
 
     DEPARTMENT_ID = Field(name="Department_ID", datatype=StringType)

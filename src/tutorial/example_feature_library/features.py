@@ -1,4 +1,4 @@
-from .data_sources import *
+from tutorial.example_feature_library.data_sources import *
 from blizz import Feature, FeatureGroup
 from typing import *
 from pyspark.sql import Column, DataFrame
@@ -8,7 +8,7 @@ __all__ = ["StudentFeatureGroup"]
 
 
 class StudentFeatureGroup(FeatureGroup):
-    """ Docstring of the feature group. """
+    """ This is the StudentFeatureGroup. """
 
     data_sources = (StudentPerformance,)
 
@@ -18,7 +18,7 @@ class StudentFeatureGroup(FeatureGroup):
         return student_perf.load()
 
     class StudentMarksAverage(Feature):
-        """ The average over all known Student marks. """
+        """ The average over all known student marks. """
 
         @classmethod
         def compute(cls, base: DataFrame, parameters: Dict[str, Any] = None) -> Column:
@@ -27,7 +27,7 @@ class StudentFeatureGroup(FeatureGroup):
             )
 
     class NumberOfStudents(Feature):
-        """ The count of students """
+        """ The total count of students. """
 
         @classmethod
         def compute(cls, base: DataFrame, parameters: Dict[str, Any] = None) -> Column:
@@ -36,7 +36,7 @@ class StudentFeatureGroup(FeatureGroup):
             )
 
     class StudentMarksScaled(Feature):
-        """  """
+        """ All student marks scaled to be between 0-1. """
 
         @classmethod
         def compute(cls, base: DataFrame, parameters: Dict[str, Any] = None) -> Column:
@@ -49,21 +49,20 @@ class StudentFeatureGroup(FeatureGroup):
             )
 
     class StudentMarksShifted(Feature):
-        """ Docstring of Feature 3. """
+        """ All student marks shifted by 1000. """
 
         @classmethod
         def compute(cls, base: DataFrame, parameters: Dict[str, Any] = None) -> Column:
             return F.col(StudentPerformance.MARKS.name) + 1000
 
     class ScaleMarksByFactor(Feature):
-        """ Docstring of Feature 4. """
+        """ Marks scaled by a (paramterizeable) factor. """
 
         class Parameters:
             FACTOR = "factor"
 
         @classmethod
         def compute(cls, base: DataFrame, parameters: Dict[str, Any] = None) -> Column:
-            # todo: provide parameter check!
             if parameters is None:
                 raise ValueError(f"{cls.name()} requires parameters")
 
@@ -72,7 +71,7 @@ class StudentFeatureGroup(FeatureGroup):
             )
 
     class AvgMarkPerStudent(Feature):
-        """ Docstring of Feature 5. """
+        """ The average mark per student. """
 
         aggregation_level = StudentPerformance.STUDENT_ID
 

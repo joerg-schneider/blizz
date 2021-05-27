@@ -26,7 +26,7 @@ def build(library_root, output, config=None):
     :return:
     """
     overwrite = False
-    if os.path.exists(library_root):
+    if os.path.exists(output):
         confirm = click.prompt(
             "The output path exists – overwrite?",
             default="n",
@@ -55,7 +55,7 @@ def bootstrap():
     Generate code snippets.
     :return:
     """
-    click.echo(Fore.BLUE + "Initialized the database")
+    click.echo(Fore.BLUE + "Not implemented yet.")
 
 
 @main.command()
