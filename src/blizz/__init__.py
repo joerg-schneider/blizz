@@ -15,7 +15,7 @@ from ._feature_library import (
 )
 from ._primitives import Relation, Field
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __DEFAULT_LOG_LEVEL = __os.environ.get("BLIZZ_LOG_LEVEL", __logging.INFO)
 
 __logging.basicConfig(
