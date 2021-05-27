@@ -177,7 +177,91 @@ class IrisSepal(Relation):
         # we call Iris's load() method but filter it down to `IrisSepal`'s fields:
         return Iris.load()[cls.get_field_names()]
 ```
+In the example above, the `load()` method additionally shows that each `Relation` offers helpful
+methods to interact with metadata – in this case `get_field_names()` can retrieve all defined
+fields as strings. See _API Reference on Relation and Field_ for the full list of available
+methods.
+
+## Making use of metadata declarations: blizz.check & blizz.apply
+
+Having defined structured metadata on a Relation's fields can be very powerful to carry out
+basic operations.
+
+For this purpose, `blizz` defines two modules with Python function decorators, meant to be
+added on-top of the `load()` method:
+
+- `blizz.check`: defines several utilities to check a loaded Relation against the definition. 
+- `blizz.apply`: defines several utilities for often occuring transformations to the Relation's 
+  dataframe
+
+All of these utlities work are implemented with equal functionality on Pandas and Pyspark.
+
+Consider this example, which takes care of schema checking (field names, field types, field keys),
+deduplication and checking for duplicates:
+```python
+from blizz import Relation, Field
+import blizz.check, blizz.apply
+import pandas as pd
+
+class Iris(Relation):
+
+    SEPAL_LENGTH = Field("sepal_length", datatype=float)
+    SEPAL_WIDTH = Field("sepal_width", datatype=float)
+    PETAL_LENGTH = Field("petal_length", default=0.0)
+    PETAL_WIDTH = Field("petal_width", datatype=float)
+    SPECIES = Field("species", datatype=object, key=True)
+
+    @classmethod
+    @blizz.check.types
+    @blizz.check.fields
+    @blizz.check.keys
+    @blizz.apply.defaults
+    @blizz.apply.deduplication
+    def load(cls) -> pd.DataFrame:
+        return pd.read_csv(
+            "https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7"
+            "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
+        )
+
+
+print(Iris.load())
+```
+
+It is important to note, that these decorator utilities __execute after the load() function
+has finished__, and the order of writing them matters. As an example, it makes more sense
+to execute `blizz.apply.deduplication` first, and then check its result with `blizz.check.keys`
+(unless you already expect it deduplicated, then avoid `blizz.apply.deduplication` entirely!).
+
+In this use case, your decorators have to be defined in this order (lowest one runs first):
+
+```python
+    @classmethod
+    @blizz.check.keys
+    @blizz.apply.deduplication
+    def load(cls)->pd.DataFrame:
+        pass
+```
 
 ### API Reference on Relation and Field
+
+The `Field()` constructor accepts the following arguments (besides `name`, all optional):
+
+-
+-
+-
+-
+-
+
+Each `Relation` defines the following useful methods on class level:
+
+-
+-
+-
+-
+
+Of course it is entirely possibly, to define a subclass of `Relation` for your own purposes, which 
+deals with common use-cases by own class functions it adds! For instance, you might want to create
+a `SQLRelation` which already bundles useful methods or definitions to allow you quickling 
+retrieving these kind of Relations from a SQL RDBMS.
 
 # FAQs
