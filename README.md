@@ -17,7 +17,7 @@ refactoring and debugging productivity,
 :rocket: …which offers pre-built PySpark & Pandas decorators for most common data checks & transformations – all based
 on metadata,
 
-:running: …which gives supports your workflow with boostrapping tools to generate basic code and Sphinx documentations
+:running: …which supports your workflow with boostrapping tools to generate basic code and Sphinx documentations
 
 then **blizz** is for you!
 
