@@ -7,8 +7,8 @@ exclude = [".idea", "tmp", "dist", ".tox", ".pytest_cache"]
 
 [tool.flit.metadata]
 module = "blizz"
-author = ""
-home-page = "https://github.com"
+author = "Joerg Schneider"
+home-page = "https://github.com/joerg-schneider/blizz"
 description-file = "pypi_readme.md"
 dist-name = "blizz"
 
