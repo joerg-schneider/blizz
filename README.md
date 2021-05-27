@@ -154,7 +154,7 @@ class Iris(Relation):
             "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
         )
         # using all defined key fields, one could run a simply deduplication command:
-        iris_dedup = iris.drop_duplicates(subset=cls.get_defined_key_fields())
+        iris_dedup = iris.drop_duplicates(subset=cls.get_key_fields())
         return iris_dedup
 ```
 
@@ -246,18 +246,31 @@ In this use case, your decorators have to be defined in this order (lowest one r
 
 The `Field()` constructor accepts the following arguments (besides `name`, all optional):
 
--
--
--
--
--
+- `name`: the target field name, referencing a field in the Relation as retrieved by `load()`. If
+  you want to retrieve an originally differently name field, then capture its source name in 
+  `source_name`
+- `source_name`: the field name as in the source – useful for `load()` to retrieve the Relation,
+  before fields get renamed – such renaming can be done by `blizz.apply.rename`
+- `datatype`: the Field's datatype – for Pandas, can be defined as Python built-in, numpy type, or
+  as a String value ("int"). For PySpark, use `pyspark.sql.types.DataType` or the PySpark datatypes
+  `simpleString` representation (e.g. "int", "string", ...).
+- `default`: allows one to define a literal as a default value on NULL
+- `description`: allows one to provide a string as a description/comment on the Field
+- `key`: a boolean flag indicating if this field is part of the primary key
+- `mock`: allows one to define a callable mocking data for this Field – useful for testing of Relation's
+    with synthetic data.
 
 Each `Relation` defines the following useful methods on class level:
 
--
--
--
--
+- `Relation.get_fields()`: returns all _Fields_ as defined
+- `Relation.get_field_names()`: returns all _Fields_ names as defined
+- `Relation.get_types()`: returns all _Fields_ datatypes
+- `Relation.get_key_fields()`: returns all _Fields_, defined as key
+- `Relation.get_key_field_names()`: returns all names of _Fields_, defined as key
+- `Relation.get_defaults()`: return a Dictionary mapping from _Field_ to its default value, where defined  
+- `Relation.get_default(<Field>)`: return the default value for a _Field_
+- `Relation.mock()`: to be overridden by each `Relation` – allows one to define a mocked version of `load()`
+to produce synthetic data for testing.
 
 Of course it is entirely possibly, to define a subclass of `Relation` for your own purposes, which 
 deals with common use-cases by own class functions it adds! For instance, you might want to create

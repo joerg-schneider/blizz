@@ -68,7 +68,7 @@ def _deduplicate(
 ) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
 
     if key is None:
-        key_fields = r.get_defined_key_fields()
+        key_fields = r.get_key_fields()
         if len(key_fields) == 0:
             logger.info(f"No key fields defined – deduplicating based on all fields.")
             key = r.get_fields()
@@ -174,7 +174,7 @@ def _rename_fields(
     if renames is None:
         renames = dict()
 
-    defined_renames_on_relation = r.get_defined_field_renames()
+    defined_renames_on_relation = r.get_field_renames()
     all_renames: Dict[str, str] = dict()
     all_renames.update(defined_renames_on_relation)
     all_renames.update(renames)

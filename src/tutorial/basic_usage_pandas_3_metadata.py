@@ -29,7 +29,7 @@ class Iris(Relation):
             "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
         )
         # using all defined key fields, one could run a simply deduplication command:
-        iris_dedup = iris.drop_duplicates(subset=cls.get_defined_key_fields())
+        iris_dedup = iris.drop_duplicates(subset=cls.get_key_fields())
         return iris_dedup
 
 

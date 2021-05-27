@@ -33,10 +33,10 @@ def test_relation():
         my_df.select_dtypes(include=MyTestRelation1.COL2.datatype)
     )
 
-    assert MyTestRelation1.get_defined_key_field_names() == [MyTestRelation1.COL1]
+    assert MyTestRelation1.get_key_field_names() == [MyTestRelation1.COL1]
     assert MyTestRelation1.COL2.default == ""
-    defined_types = MyTestRelation1.get_defined_types()
+    defined_types = MyTestRelation1.get_types()
     print(defined_types)
     assert defined_types[MyTestRelation1.COL1] == int
-    defined_renames = MyTestRelation1.get_defined_field_renames()
+    defined_renames = MyTestRelation1.get_field_renames()
     assert defined_renames["column2"] == "column3"

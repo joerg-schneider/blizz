@@ -85,13 +85,13 @@ def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFr
         raise NotImplementedError("blizz.check.keys not yet implemented for PySpark")
         pass
     elif is_pandas_df(data, r):
-        duplicated = data[r.get_defined_key_field_names()].duplicated()
+        duplicated = data[r.get_key_field_names()].duplicated()
         duplicated_rows = len(data[duplicated])
 
         if duplicated_rows > 0:
             raise ValueError(
                 f"Key error for '{r.name()}': "
-                f"using keys '{r.get_defined_key_field_names()}'"
+                f"using keys '{r.get_key_field_names()}'"
                 f" there are {duplicated_rows} duplicates."
             )
 

@@ -70,7 +70,7 @@ class Relation:
         pass
 
     @classmethod
-    def get_defined_types(
+    def get_types(
         cls
     ) -> Dict["Field", Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]]:
         """
@@ -87,7 +87,7 @@ class Relation:
         return col_name_to_type
 
     @classmethod
-    def get_defined_field_renames(cls) -> Dict["str", "str"]:
+    def get_field_renames(cls) -> Dict["str", "str"]:
         """
         :return: Dictionary [str,str] from source field name to target field name
         """
@@ -102,7 +102,7 @@ class Relation:
         return source_field_name_to_target
 
     @classmethod
-    def get_defined_key_fields(cls) -> List["Field"]:
+    def get_key_fields(cls) -> List["Field"]:
         """
         Returns all fields of this Relation defined as keys.
         :return: a List of blizz Fields.
@@ -110,12 +110,12 @@ class Relation:
         return [c for c in cls.get_fields() if c.key]
 
     @classmethod
-    def get_defined_key_field_names(cls) -> List[str]:
+    def get_key_field_names(cls) -> List[str]:
         """
         Returns all field names of this Relation defined as keys.
         :return: a List of field names as strings.
         """
-        return [f.name for f in cls.get_defined_key_fields()]
+        return [f.name for f in cls.get_key_fields()]
 
     @classmethod
     def get_field_names(cls) -> List[str]:

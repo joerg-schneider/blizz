@@ -184,7 +184,7 @@ def relation_to_rst(st_in: Type[Relation]) -> str:
         return template_string.format(
             name=st_in.name(),
             description=st_in.__doc__,
-            primary_key_section=_make_pk_section(st_in.get_defined_key_fields()),
+            primary_key_section=_make_pk_section(st_in.get_key_fields()),
             fields_table_rows=_make_fields_rows(st_in.get_fields()),
             load_code=inspect.getsource(st_in.load).lstrip(),
         )
