@@ -5,19 +5,19 @@ blizz – _be blizzful_
 
 If you are looking for…
 
-:clipboard: …an lightweight option to capture data schemas and field annotations for either Pandas or PySpark,
+📋 …an lightweight option to capture data schemas and field annotations for either Pandas or PySpark,
 
-:star: …which makes table definitions available not just at runtime, but already while developing code
+⭐ …which makes table definitions available not just at runtime, but already while developing code
 – with IDE type checking and autocomplete!
 
-:snowflake: …which allows dynamic schema inheritance/reference, to express several levels of derived data assets –
+❄️ …which allows dynamic schema inheritance/reference, to express several levels of derived data assets –
 as common in stable data pipelines – tracing the full data field lineage across your project and boosting
 refactoring and debugging productivity,
 
-:rocket: …which offers pre-built PySpark & Pandas decorators for most common data checks & transformations – all based
+🚀 …which offers pre-built PySpark & Pandas decorators for most common data checks & transformations – all based
 on metadata,
 
-:running: …which supports your workflow with boostrapping tools to generate basic code and Sphinx documentations
+🏃 …which supports your workflow with boostrapping tools to generate basic code and Sphinx documentations
 
 then **blizz** is for you!
 
