@@ -117,7 +117,66 @@ class Iris(Relation):
 In this example, one can see how to add another, derived field to the _Relation_ which is just
 built on loading, leveraging existing _Field_ references.
 
-### Relation hierarchies and 
+### Defining Metadata properties on Field
+`Field` is implemented in an elegant way: It cleanly folds down to a Python string when you use it as part
+of an expression (e.g. inside of square brackets for Pandas), but actually, _it is not a string_.
+
+In the previous examples, _Fields_ have been only constructed using its default first attribute, `.name`. 
+However, it does also support a big variety of useful declarations one might like to make (see
+`API Reference on Relation and Field` below!), such as defining datatypes, adding a description or
+the _Field's_ default value:
+
+```python
+class Iris(Relation):
+    # setting some example additional Field attributes:
+    # 1. of course most importantly, one can set a datatype to complete the
+    #    Relation's schema definition in the classical sense:
+    SEPAL_LENGTH = Field("sepal_length", datatype=float)
+
+    # for use with Pandas, `datatype` accepts Python inbuilts (e.g. float, object, int),
+    # quoted names of Pandas datatypes, and also instances of numpy types, such as
+    # numpy.int, numpy.number, etc.
+
+    # 2. to capture metadata, and for documentation purposes, a description can be set:
+    SEPAL_WIDTH = Field("sepal_width", description="The Sepal length")
+
+    # 3. `default` also to capture a default row value for a Field:
+    PETAL_LENGTH = Field("petal_length", default=0.0)
+    PETAL_WIDTH = Field("petal_width")
+
+    # 4. the boolean flag `key` allows to specify key fields:
+    SPECIES = Field("species", key=True)
+
+    @classmethod
+    def load(cls) -> pd.DataFrame:
+        iris = pd.read_csv(
+            "https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7"
+            "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
+        )
+        # using all defined key fields, one could run a simply deduplication command:
+        iris_dedup = iris.drop_duplicates(subset=cls.get_defined_key_fields())
+        return iris_dedup
+```
+
+### Relation hierarchies
+Since Fields are Python variables (class members of `Relation`), this makes building connected Relations very easy:
+
+```python
+# based on Iris, we can define a derived second Relation `IrisSepal`:
+
+class IrisSepal(Relation):
+    """ All records of Iris but filtered on a subset of Fields, just for the Sepal."""
+
+    # we can simply reference the existing definitions that were made:
+    SEPAL_LENGTH = Iris.SEPAL_LENGTH
+    SEPAL_WIDTH = Iris.SEPAL_WIDTH
+    SPECIES = Iris.SPECIES
+
+    @classmethod
+    def load(cls) -> pd.DataFrame:
+        # we call Iris's load() method but filter it down to `IrisSepal`'s fields:
+        return Iris.load()[cls.get_field_names()]
+```
 
 ### API Reference on Relation and Field
 
