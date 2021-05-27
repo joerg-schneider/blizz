@@ -28,9 +28,10 @@ then **blizz** is for you!
         - [Using field definitions](#using-field-definitions-inside-of-load)
         - [Defining metadata properties](#defining-metadata-properties-on-field)
         - [Relation Hierarchies](#relation-hierarchies)
-    - [Making use of metadata declarations: blizz.check & blizz.apply](#making-use-of-metadata-declarations-blizzcheck--blizzapply)
-    - [Using blizz with Pyspark](#using-blizz-with-pyspark)
-    - [API Reference on Relation and Field](#api-reference-on-relation-and-field)
+        - [Making use of metadata declarations: blizz.check & blizz.apply](#making-use-of-metadata-declarations-blizzcheck--blizzapply)
+        - [Using blizz with Pyspark](#using-blizz-with-pyspark)
+        - [API Reference on Relation and Field](#api-reference-on-relation-and-field)
+    - [blizz Feature Store](#blizz-feature-library)
     
 # Installation
 You can install the latest stable version of _blizz_ simply using Pip:
@@ -39,6 +40,8 @@ You can install the latest stable version of _blizz_ simply using Pip:
 
 Note, that either `pandas` or `pyspark` need to be installed separately, if you do
 not have them already.
+
+If you have any issues, questions or suggestions – do not hesitate to open an GitHub issue.
 
 A test installation from the latest sources is possible as well:
 
@@ -196,7 +199,7 @@ methods to interact with metadata – in this case `get_field_names()` can retri
 fields as strings. See _API Reference on Relation and Field_ for the full list of available
 methods.
 
-## Making use of metadata declarations: blizz.check & blizz.apply
+### Making use of metadata declarations: blizz.check & blizz.apply
 
 Having defined structured metadata on a Relation's fields can be very powerful to carry out
 basic operations.
@@ -339,4 +342,7 @@ Of course it is entirely possibly, to define a subclass of `Relation` for your o
 deals with common use-cases by own class functions it adds! For instance, you might want to create
 a `SQLRelation` which already bundles useful methods or definitions to allow you quickling 
 retrieving these kind of Relations from a SQL RDBMS.
+
+## blizz Feature Library
+**EXPERIMENTAL – only supported with PySpark**
 
