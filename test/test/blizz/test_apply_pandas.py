@@ -1,6 +1,7 @@
 import pandas as pd
-import blizz.check
+
 import blizz.apply
+import blizz.check
 from blizz import Field, Relation
 
 

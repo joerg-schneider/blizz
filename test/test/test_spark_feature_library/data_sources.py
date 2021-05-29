@@ -1,12 +1,12 @@
 from pyspark.sql import DataFrame
+from pyspark.sql import functions as F
 from pyspark.sql.types import (
-    DoubleType,
     IntegerType,
     StringType,
     DateType,
     TimestampType,
 )
-from pyspark.sql import functions as F
+
 import blizz.check
 from blizz import Relation, Field
 from test.conftest import (

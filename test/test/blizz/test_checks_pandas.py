@@ -1,8 +1,9 @@
-import pytest
+import numpy as np
 import pandas as pd
+import pytest
+
 import blizz.check
 from blizz import Field, Relation
-import numpy as np
 from test.conftest import path_to_test_data, path_student_performance_test
 from test.test_pandas_feature_library import data_sources
 
@@ -116,3 +117,32 @@ class RelationTypeDefVariance1(Relation):
 
 def test_type_variances() -> None:
     RelationTypeDefVariance1.load()
+
+
+class StudentPerformanceFaulty3(Relation):
+    """
+    Example of a duplicated field defined as key.
+    """
+
+    STUDENT_ID = Field(name="Student_ID")
+    # this is actually not the key:
+    SEMSTER_NAME = Field("Semster_Name", key=True)
+    PAPER_ID = Field(name="Paper_ID")
+    MARKS = Field(name="Marks")
+
+    @classmethod
+    @blizz.check.fields
+    @blizz.check.types
+    @blizz.check.keys
+    def load(cls) -> pd.DataFrame:
+        return pd.read_csv(path_student_performance_test().as_posix())
+
+
+def test_key_check() -> None:
+    """
+    """
+    with pytest.raises(
+        expected_exception=ValueError,
+        match="Key error for 'StudentPerformanceFaulty3'*",
+    ):
+        StudentPerformanceFaulty3.load()

@@ -1,12 +1,11 @@
-from pathlib import Path
-from typing import Optional, Dict, Any, Iterable, Union, Tuple
-from test.test_spark_feature_library.data_sources import *
-from blizz import Feature, FeatureGroup, FeatureParameter
-from pyspark.sql import DataFrame, Column, SparkSession
+from typing import Dict, Any
+
 import pyspark.sql.functions as F
-from pyspark.sql.types import DoubleType
+from pyspark.sql import DataFrame, Column, SparkSession
 from pyspark.sql.window import Window
-from blizz import Relation, Field
+
+from blizz import Feature, FeatureGroup, FeatureParameter
+from test.test_spark_feature_library.data_sources import *
 
 
 def test_feature_group(spark_session: SparkSession):

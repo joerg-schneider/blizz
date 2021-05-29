@@ -1,8 +1,7 @@
 from pyspark import SparkFiles
 from pyspark.sql import DataFrame
-from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType
-from test.conftest import spark_session
+
 import blizz.check
 from blizz import Relation, Field
 

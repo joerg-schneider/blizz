@@ -1,10 +1,9 @@
 import pytest
-
-import blizz.check
-from blizz import Field, Relation
 from pyspark.sql import DataFrame
 from pyspark.sql.types import StringType, IntegerType
 
+import blizz.check
+from blizz import Field, Relation
 from test.conftest import get_or_create_spark_session, path_student_performance_test
 from test.test_spark_feature_library.data_sources import StudentPerformance
 
@@ -97,6 +96,7 @@ def test_key_check() -> None:
         match="Key error for 'StudentPerformanceFaulty3'*",
     ):
         StudentPerformanceFaulty3.load()
+
 
 def test_passes_checks() -> None:
     sdf = StudentPerformance.load()

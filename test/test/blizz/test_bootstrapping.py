@@ -1,6 +1,6 @@
 import blizz
-from test.test_spark_feature_library.data_sources import DepartmentInformation
 from test.test_pandas_feature_library.data_sources import StudentPerformance
+from test.test_spark_feature_library.data_sources import DepartmentInformation
 
 
 def test_bootstrapping_from_spark():

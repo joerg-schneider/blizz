@@ -1,5 +1,7 @@
 from typing import Union
+
 import pandas as pd
+
 from blizz import Relation, Field
 
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from blizz._run_config import read_config, validate_schema, run_config_from_file
 from blizz._runtime import build_features, write_results
 

@@ -4,7 +4,6 @@ from pandas import DataFrame
 import blizz.check
 from blizz import Relation, Field
 from test.conftest import path_student_performance_test
-import numpy as np
 
 
 class StudentPerformance(Relation):
