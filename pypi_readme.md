@@ -212,7 +212,7 @@ basic operations.
 For this purpose, `blizz` defines two modules with Python function decorators, meant to be
 added on-top of the `load()` method:
 
-- `blizz.check`: defines several utilities to check a loaded Relation against the definition. 
+- `blizz.check`: defines several utilities to check a loaded Relation against the definition 
 - `blizz.apply`: defines several utilities for often occuring transformations to the Relation's 
   dataframe
 
@@ -231,14 +231,15 @@ class Iris(Relation):
     SEPAL_WIDTH = Field("sepal_width", datatype=float)
     PETAL_LENGTH = Field("petal_length", default=0.0)
     PETAL_WIDTH = Field("petal_width", datatype=float)
-    SPECIES = Field("species", datatype=object, key=True)
+    SPECIES = Field("species_renamed", datatype=object, key=True, source_name="species")
 
     @classmethod
     @blizz.check.types
     @blizz.check.fields
     @blizz.check.keys
-    @blizz.apply.defaults
+    @blizz.apply.defaults(fill=PETAL_LENGTH)  # you can use field as arguments, too!
     @blizz.apply.deduplication
+    @blizz.apply.renames  # renames should be applied first
     def load(cls) -> pd.DataFrame:
         return pd.read_csv(
             "https://gist.githubusercontent.com/curran/a08a1080b88344b0c8a7"
@@ -263,6 +264,14 @@ In this use case, your decorators have to be defined in this order (lowest one r
     def load(cls)->pd.DataFrame:
         pass
 ```
+
+In general, when you rename source fields, run `@blizz.apply.renames` first (e.g. place it
+lowest), so that following checks/applies find the fields they are looking for.
+
+It is possible to pass user defined functions meant to run as checks/applies using `blizz.check.func`
+and `blizz.apply.func` decorators – use the keyword argument `function` to pass in any
+callable with a signature of `Type[Relation], DataFrame -> DataFrame`. Refer to
+[custom_decorators](src/tutorial/custom_decorators.py) as an example script.
 
 ### Using blizz with PySpark
 
@@ -335,7 +344,9 @@ Each `Relation` defines the following useful methods on class level:
 
 - `Relation.get_fields()`: returns all _Fields_ as defined
 - `Relation.get_field_names()`: returns all _Fields_ names as defined
-- `Relation.get_types()`: returns all _Fields_ datatypes
+- `Relation.get_types()`: returns all _Fields_ datatypes, as a Dict `Field -> Datatype`. Note that 
+  datatypes here are as heterogenous, as you defined them, e.g. they can either be strings or applicable 
+  classes such as `int`
 - `Relation.get_key_fields()`: returns all _Fields_, defined as key
 - `Relation.get_key_field_names()`: returns all names of _Fields_, defined as key
 - `Relation.get_defaults()`: return a Dictionary mapping from _Field_ to its default value, where defined  
@@ -345,7 +356,7 @@ to produce synthetic data for testing.
 
 Of course it is entirely possibly, to define a subclass of `Relation` for your own purposes, which 
 deals with common use-cases by own class functions it adds! For instance, you might want to create
-a `SQLRelation` which already bundles useful methods or definitions to allow you quickling 
+a `SQLRelation` which already bundles useful methods or definitions to allow you quickly
 retrieving these kind of Relations from a SQL RDBMS.
 
 ### API Reference on blizz.check & blizz.apply
@@ -357,6 +368,8 @@ retrieving these kind of Relations from a SQL RDBMS.
 - `blizz.check.types`: validates that all fields that have defined data types on the Relation match with their
   data types as in the DataFrame returned by `load()`
 - `blizz.check.keys`: validates that the subset of all Fields marked as keys is unique
+- `blizz.check.func`: run the user defined function passed as the `function` keyword parameter and check if
+    it raises an exception. The function's signature should be `Type[Relation], DataFrame -> DataFrame`.
 
 All `blizz.check` decorators accept the argument `on_fail`, which can be set to:
 - `blizz.check.WARN`: raise a warning on failing the check
@@ -364,18 +377,20 @@ All `blizz.check` decorators accept the argument `on_fail`, which can be set to:
 
 `blizz.apply` offers the following decorators for transformations:
 - `blizz.apply.deduplication`: deduplicate the DataFrame returned by `load()` either by the Fields already marked
-  as keys of the Relation, or the subset of Field given as argument `key:List[str]` to the decorator (which
+  as keys of the Relation, or the subset of Field given as argument `key:List[Field]` to the decorator (which
   has precedence). Additionally the
-  decorator supports the arguments `sort_on:List[str]` and `sort_order` (which can be either `blizz.apply.ASC` or 
+  decorator supports the arguments `sort_on:List[Field]` and `sort_order` (which can be either `blizz.apply.ASC` or 
   `blizz.apply.DESC`) – this can ensure which non-key records are preferrably kept on duplication. E.g. when you
   find a duplicate based on the key-column, then pick among those duplicates the most recently updated row 
-  – here one might use something like: `sort_on = ["update_timestamp"], sort_order = blizz.apply.DESC`.
+  – here one might use something like: `sort_on = [UPDATE_TIMESTAMP], sort_order = blizz.apply.DESC`.
 - `blizz.apply.defaults`: fill defined defaults for NULL values in the DataFrame returned by `load()`, either
   using the defined value defaults from the Relation's Fields (if exist) or as given with as the argument
-  `fill: List[str]` to the decorator (which has precedence).
+  `fill: List[Field]` to the decorator (which has precedence).
 - `blizz.apply.renames`: perform Field renames for columns in the DataFrame as returned by `load()`, either
   using the defined pairs of `Field.source_name` -> `Field.name` (where exists) or using the rename definitions
   as given as argument `columns:Dict[str,str]` to the decorator, which will be added to the renames to perform.
+- `blizz.apply.func`: run the user defined function passed as the `function` keyword parameter and return
+  the transformed data. The function's signature should be `Type[Relation], DataFrame -> DataFrame`.  
 
 
 ## Bootstrapping – generate schema definitions from DataFrames
