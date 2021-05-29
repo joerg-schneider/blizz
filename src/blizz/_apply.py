@@ -24,7 +24,7 @@ DESC = "desc"
 
 @doublewrap
 def deduplication(
-    original_func=None,
+    __original_func=None,
     *,
     key: List[Field] = None,
     sort_on: List[Field] = None,
@@ -32,11 +32,11 @@ def deduplication(
 ):
     """Apply deduplication to a loaded Blizz relation."""
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         res = _deduplicate(
             r=relation, data=res, key=key, sort_on=sort_on, sort_order=sort_order
         )
@@ -46,14 +46,14 @@ def deduplication(
 
 
 @doublewrap
-def defaults(original_func=None, *, fill: List[Field] = None):
+def defaults(__original_func=None, *, fill: List[Field] = None):
     """Apply default values to a loaded Blizz relation."""
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         res = _fill_defaults(r=relation, data=res, fill=fill)
 
         return res
@@ -154,14 +154,14 @@ def _fill_defaults(
 
 
 @doublewrap
-def renames(original_func=None, *, columns: Dict[str, str] = None):
+def renames(__original_func=None, *, columns: Dict[str, str] = None):
     """Apply renames values to a loaded Blizz relation."""
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         res = _rename_fields(r=relation, data=res, columns=columns)
         return res
 

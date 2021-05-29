@@ -119,15 +119,15 @@ def _keys(r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFr
 
 
 @doublewrap
-def fields(original_func=None, *, on_fail: str = RAISE):
+def fields(__original_func=None, *, on_fail: str = RAISE):
     """ Check fields on a blizz Relation for existance. """
     _verify_args(on_fail)
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         _run_check_and_handle_outcome(
             _field_existence, r=relation, data=res, on_fail=on_fail
         )
@@ -138,15 +138,15 @@ def fields(original_func=None, *, on_fail: str = RAISE):
 
 
 @doublewrap
-def types(original_func=None, *, on_fail: str = RAISE):
+def types(__original_func=None, *, on_fail: str = RAISE):
     """ Check datatypes on a blizz Relation. """
     _verify_args(on_fail)
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         _run_check_and_handle_outcome(
             _field_types, r=relation, data=res, on_fail=on_fail
         )
@@ -156,15 +156,15 @@ def types(original_func=None, *, on_fail: str = RAISE):
 
 
 @doublewrap
-def keys(original_func=None, *, on_fail: str = RAISE):
+def keys(__original_func=None, *, on_fail: str = RAISE):
     """ Check keys on a blizz Relation. """
     _verify_args(on_fail)
 
-    @functools.wraps(original_func)
+    @functools.wraps(__original_func)
     def _decorated(*args, **kwargs):
-        relation = _inspect.get_class_that_defined_method(original_func)
+        relation = _inspect.get_class_that_defined_method(__original_func)
         assert relation is not None
-        res = original_func(*args, **kwargs)
+        res = __original_func(*args, **kwargs)
         _run_check_and_handle_outcome(_keys, r=relation, data=res, on_fail=on_fail)
 
         return res
