@@ -88,13 +88,25 @@ def _deduplicate(
 
     if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
-        if sort_on is not None:
-            # todo: sort
-            raise NotImplementedError(
-                f"sort_on/sort_order not implemented yet for deduplicate."
-            )
+        from pyspark.sql.window import Window
+        from pyspark.sql.functions import dense_rank, asc, desc
 
-        data = data.drop_duplicates(subset=key)
+        if sort_on is not None:
+            key_cols = [k if isinstance(k, str) else k.name for k in key]
+            sort_cols = [s if isinstance(s, str) else s.name for s in sort_on]
+            row_ranked = Field("bliz__row_number")
+
+            window = Window.partitionBy(*key_cols).orderBy(*sort_cols)
+            if sort_order == ASC:
+                window = window.orderBy(asc(*sort_cols))
+            else:
+                window = window.orderBy(desc(*sort_cols))
+
+            rank_expression = dense_rank().over(window)
+            data_ranked = data.withColumn(row_ranked, rank_expression)
+            data = data_ranked.where(f"{row_ranked} = 1").drop(row_ranked)
+        else:
+            data = data.drop_duplicates(subset=key)
         return data
 
     elif is_pandas_df(data, r):
