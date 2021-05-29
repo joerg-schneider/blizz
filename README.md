@@ -2,6 +2,7 @@ blizz – _be blizzful_
 =====================
 **effortless Python table schema management**
 
+![PyPi Package](https://badge.fury.io/py/PROJECT.svg)
 
 If you are looking for…
 
