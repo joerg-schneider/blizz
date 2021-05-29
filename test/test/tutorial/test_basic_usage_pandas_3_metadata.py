@@ -33,8 +33,8 @@ class Iris(Relation):
         iris_dedup = iris.drop_duplicates(subset=cls.get_key_fields())
         return iris_dedup
 
+def test_basic_usage_pandas_3():
+    # calling load(), we can retrieve a dataframe for the Relation:
+    iris_df = Iris.load()
 
-# calling load(), we can retrieve a dataframe for the Relation:
-iris_df = Iris.load()
-
-print(iris_df)
+    print(iris_df)

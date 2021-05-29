@@ -1,8 +1,10 @@
-from tutorial.example_feature_library.data_sources import *
-from blizz import Feature, FeatureGroup
 from typing import *
+
 from pyspark.sql import Column, DataFrame
 from pyspark.sql import functions as F, Window
+
+from blizz import Feature, FeatureGroup
+from tutorial.example_feature_library.data_sources import *
 
 __all__ = ["StudentFeatureGroup"]
 

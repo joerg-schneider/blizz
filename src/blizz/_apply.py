@@ -1,6 +1,6 @@
 import functools
 import logging
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Callable
 
 from blizz import _inspect, Field
 from blizz._helpers import doublewrap
@@ -203,3 +203,25 @@ def _rename_fields(
         return data
 
     logger.info(f"Applied the following field renames: {all_renames} to {r.name()}.")
+
+
+@doublewrap
+def func(
+    __original_func=None,
+    *,
+    function: Callable[
+        [Type[Relation], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]],
+        Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
+    ],
+):
+    """Apply a user defined function to a loaded Blizz relation."""
+
+    @functools.wraps(__original_func)
+    def _decorated(*args, **kwargs):
+        relation = _inspect.get_class_that_defined_method(__original_func)
+        assert relation is not None
+        res = __original_func(*args, **kwargs)
+        res = function(relation, res)
+        return res
+
+    return _decorated

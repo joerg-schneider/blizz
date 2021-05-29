@@ -51,7 +51,9 @@ class Relation:
     #       the location!
     @classmethod
     @abstractmethod
-    def load(cls, *args, **kwargs) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
+    def load(
+        cls, *args, **kwargs
+    ) -> Union["pyspark.sql.DataFrame", "pandas.DataFrame"]:
         """
         Method loading a dataframe for the given Relation – to be implemented by each subclass
         of `Relation`.
@@ -193,6 +195,7 @@ class Field(str):
     """ A blizz Field captures known metadata on a field which is part of
     a blizz Relation.
     """
+
     name: str
     datatype: Union[Type["pyspark.sql.types.DataType"], "numpy.dtype", "str"]
     default: Any
@@ -209,9 +212,7 @@ class Field(str):
         description: str = None,
         key: bool = None,
         source_name: str = None,
-        mock_func: Callable[
-            [], Any
-        ] = None,
+        mock_func: Callable[[], Any] = None,
     ):
 
         description_ = description
@@ -248,9 +249,7 @@ class Field(str):
                 return source_name_
 
             @property
-            def mock_func(
-                self
-            ) -> Callable[[], Any]:
+            def mock_func(self) -> Callable[[], Any]:
                 return mock_func_
 
         return Field_(name)

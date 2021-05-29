@@ -1,12 +1,14 @@
-from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql.types import DoubleType, IntegerType, StringType, DateType
-from pyspark.sql import functions as F
-import blizz.check
-from blizz import Relation, Field
 import os
 
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import functions as F
+from pyspark.sql.types import IntegerType, StringType, DateType
+
+import blizz.check
+from blizz import Relation, Field
+
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-PATH_TEST_DATA = os.path.join(CURRENT_DIR, os.pardir,os.pardir, os.pardir, "test/data")
+PATH_TEST_DATA = os.path.join(CURRENT_DIR, os.pardir, os.pardir, os.pardir, "test/data")
 
 
 def get_or_create_spark_session() -> SparkSession:

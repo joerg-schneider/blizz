@@ -27,4 +27,5 @@ class Iris(Relation):
         )
 
 
-print(Iris.load())
+def decorator_usage_in_pandas():
+    print(Iris.load())

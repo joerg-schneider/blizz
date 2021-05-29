@@ -1,5 +1,6 @@
-from blizz import Relation, Field
 import pandas as pd
+
+from blizz import Relation, Field
 
 
 class Iris(Relation):

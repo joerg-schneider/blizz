@@ -2,7 +2,7 @@ from pyspark import SparkFiles
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType
-
+from test.conftest import spark_session
 import blizz.check
 from blizz import Relation, Field
 
@@ -31,11 +31,9 @@ class Iris(Relation):
         return df
 
 
-# set up a simple spark session:
-spark = SparkSession.builder.getOrCreate()
-# calling load(), we can retrieve a dataframe for the Relation:
-iris_df = Iris.load(spark)
-print(iris_df)
-# using the Relation's Schema, we can access/modify iris_df referencing fields we like:
-iris_df.select(Iris.SEPAL_WIDTH, Iris.SEPAL_LENGTH).show()
-spark.stop()
+def test_basic_usage_pyspark(spark_session):
+    # calling load(), we can retrieve a dataframe for the Relation:
+    iris_df = Iris.load(spark_session)
+    print(iris_df)
+    # using the Relation's Schema, we can access/modify iris_df referencing fields we like:
+    iris_df.select(Iris.SEPAL_WIDTH, Iris.SEPAL_LENGTH).show()

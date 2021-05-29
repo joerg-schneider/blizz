@@ -18,9 +18,9 @@ class Iris(Relation):
             "/raw/0e7a9b0a5d22642a06d3d5b9bcbad9890c8ee534/iris.csv"
         )
 
+def test_basic_usage_pandas_1():
+    # calling load(), we can retrieve a dataframe for the Relation:
+    iris_df = Iris.load()
 
-# calling load(), we can retrieve a dataframe for the Relation:
-iris_df = Iris.load()
-
-# using the Relation's Schema, we can access/modify iris_df referencing fields we like:
-print(iris_df[[Iris.SEPAL_LENGTH, Iris.SEPAL_WIDTH]])
+    # using the Relation's Schema, we can access/modify iris_df referencing fields we like:
+    print(iris_df[[Iris.SEPAL_LENGTH, Iris.SEPAL_WIDTH]])

@@ -2,7 +2,7 @@ import functools
 import inspect
 import logging
 import warnings
-from typing import Union
+from typing import Union, Callable
 
 from blizz import _inspect
 from ._helpers import doublewrap
@@ -172,6 +172,29 @@ def keys(__original_func=None, *, on_fail: str = RAISE):
     return _decorated
 
 
+@doublewrap
+def func(
+    __original_func=None,
+    *,
+    function: Callable[
+        [Type[Relation], Union["pyspark.sql.DataFrame", "pandas.DataFrame"]],
+        Union["pyspark.sql.DataFrame", "pandas.DataFrame"],
+    ],
+    on_fail: str = RAISE,
+):
+    """Run a user defined check function to a loaded Blizz relation."""
+
+    @functools.wraps(__original_func)
+    def _decorated(*args, **kwargs):
+        relation = _inspect.get_class_that_defined_method(__original_func)
+        assert relation is not None
+        res = __original_func(*args, **kwargs)
+        _run_check_and_handle_outcome(function, r=relation, data=res, on_fail=on_fail)
+        return res
+
+    return _decorated
+
+
 def _run_check_and_handle_outcome(
     check: callable, r: Type[Relation], data, on_fail: str
 ) -> None:
@@ -181,7 +204,7 @@ def _run_check_and_handle_outcome(
         return None
 
     try:
-        check(r=r, data=data)
+        check(r, data)
     except Exception as error:
         if on_fail == RAISE:
             raise error

@@ -35,5 +35,5 @@ class IrisSepal(Relation):
         # we call Iris's load() method but filter it down to `IrisSepal`'s fields:
         return Iris.load()[cls.get_field_names()]
 
-
-print(IrisSepal.load())
+def test_basic_usage_pandas_4():
+    print(IrisSepal.load())

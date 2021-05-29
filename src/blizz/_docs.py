@@ -2,7 +2,6 @@ import inspect
 import os
 import shutil
 import subprocess
-import tempfile
 import webbrowser
 from pathlib import Path
 from typing import Type, Tuple, Iterable, List, Dict, Any
@@ -158,7 +157,7 @@ def make_aggregation_level_block(feat_in: Type[Feature]) -> str:
 def make_parameters_block(feat_in: Type[Feature]) -> str:
     if hasattr(feat_in, "Parameters"):
         members = [
-            getattr(feat_in.Parameters,attr)
+            getattr(feat_in.Parameters, attr)
             for attr in dir(feat_in.Parameters)
             if not callable(getattr(feat_in.Parameters, attr))
             and not attr.startswith("__")
