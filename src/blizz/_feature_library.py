@@ -7,7 +7,7 @@ from typing import Iterable, Optional
 from pyspark.sql import DataFrame, Column
 
 from ._constants import ALL_FIELDS
-from ._helpers import camel_case_to_snake, safe_name
+from ._helpers import camel_case_to_snake, safe_name, is_blizz_field
 from ._primitives import Field, Relation
 
 
@@ -121,12 +121,12 @@ class FeatureGroup(ABC):
 
                 if isinstance(aggregation_level, str):
                     aggregation_level = [aggregation_level]
-                elif isinstance(aggregation_level, Field):
+                elif is_blizz_field(aggregation_level):
                     aggregation_level = [aggregation_level.name]
                 elif isinstance(aggregation_level, Iterable):
                     aggregation_level = list(aggregation_level)
                     # check if "Field" type was used, if so, convert to string
-                    if isinstance(aggregation_level[0], Field):
+                    if is_blizz_field(aggregation_level[0]):
                         aggregation_level = [f.name for f in aggregation_level]
 
                 # renames non-key column to target name

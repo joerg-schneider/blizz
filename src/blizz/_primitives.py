@@ -146,7 +146,7 @@ class Relation:
         :return: the default row value as defined
         """
         for col in cls.get_fields():
-            if col.name == field:
+            if col.name == field and col.default is not None:
                 return col.default
 
         raise ValueError(f"Field '{field}' not defined for Relation '{cls.name()}'.")

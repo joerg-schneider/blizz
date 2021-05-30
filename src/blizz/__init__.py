@@ -28,15 +28,15 @@ __logging.basicConfig(
 # blizz needs either PySpark or pandas, check and raise if missing:
 try:
     import pyspark as __pyspark
-except ImportError:
-    __pyspark = None
+except ImportError:  # pragma: no cover
+    __pyspark = None  # pragma: no cover
 
 try:
     import pandas as __pandas
-except ImportError:
-    __pandas = None
+except ImportError:  # pragma: no cover
+    __pandas = None  # pragma: no cover
 
-if __pandas is None and __pyspark is None:
+if __pandas is None and __pyspark is None:  # pragma: no cover
     msg = "'pandas' or 'pyspark' is required for blizz, but neither found."
     raise ImportError(msg)
 

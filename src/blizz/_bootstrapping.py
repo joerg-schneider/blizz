@@ -3,13 +3,13 @@ from typing import Iterable, Optional, Union
 
 try:
     import pyspark
-except ImportError:
-    pyspark = None
+except ImportError:  # pragma: no cover
+    pyspark = None  # pragma: no cover
 
 try:
     import pandas
-except ImportError:
-    pandas = None
+except ImportError:  # pragma: no cover
+    pandas = None  # pragma: no cover
 
 from ._helpers import safe_name
 

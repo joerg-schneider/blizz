@@ -12,6 +12,7 @@ from tornado import web, ioloop
 
 from blizz import FeatureGroup, Relation, Feature, Field
 from blizz._inspect import find_source_tables_on_path, find_feature_groups_on_path
+from blizz._helpers import is_blizz_field
 
 DIR_SPHINX_BASE = Path(os.path.dirname(os.path.abspath(__file__))).joinpath(
     "sphinx-base"
@@ -19,7 +20,6 @@ DIR_SPHINX_BASE = Path(os.path.dirname(os.path.abspath(__file__))).joinpath(
 TABLE_TEMPLATE = DIR_SPHINX_BASE.joinpath("relations/relation-template.rst")
 FG_TEMPLATE = DIR_SPHINX_BASE.joinpath("features/feature-group-template.rst")
 
-PORT = 8080
 HOST = "127.0.0.1"
 
 
@@ -66,7 +66,7 @@ def create_sphinx_html(source_dir: Path, target_dir: Path):
     subprocess.run(["sphinx-build", ".", "html"])
 
 
-def serve_sphinx_html(webroot: Path) -> None:
+def serve_sphinx_html(webroot: Path, port: int) -> None:
     app = web.Application(
         [
             (
@@ -76,10 +76,10 @@ def serve_sphinx_html(webroot: Path) -> None:
             )
         ]
     )
-    app.listen(port=PORT, address=HOST)
+    app.listen(port=port, address=HOST)
 
     print("\nPress 'Ctrl+C' to stop")
-    webbrowser.open(url=f"http://{HOST}:{PORT}")
+    webbrowser.open(url=f"http://{HOST}:{port}")
 
     try:
         ioloop.IOLoop.current().start()
@@ -140,17 +140,17 @@ Feature Definition
 def make_aggregation_level_block(feat_in: Type[Feature]) -> str:
     if hasattr(feat_in, "aggregation_level"):
         aggregation_level = feat_in.aggregation_level
-        if isinstance(aggregation_level, str):
-            aggregation_level = [aggregation_level]
-        elif isinstance(aggregation_level, Field):
+        if is_blizz_field(aggregation_level):
             aggregation_level = [aggregation_level.name]
+        elif isinstance(aggregation_level, str):
+            aggregation_level = [aggregation_level]
         elif isinstance(aggregation_level, Iterable):
             aggregation_level = list(aggregation_level)
             # check if "Field" type was used, if so, convert to string
-            if isinstance(aggregation_level[0], Field):
+            if is_blizz_field(aggregation_level[0]):
                 aggregation_level = [f.name for f in aggregation_level]
 
-        return ",".join([col.name for col in aggregation_level])
+        return ",".join([col for col in aggregation_level])
     return "Not defined."
 
 
@@ -220,7 +220,10 @@ def relation_to_rst(st_in: Type[Relation]) -> str:
 
 
 def _field_type_to_string(in_type: Any) -> str:
-    if issubclass(in_type, DataType):
+    if in_type is None:
+        return "Undefined"
+
+    if inspect.isclass(in_type) and issubclass(in_type, DataType):
         return in_type().simpleString()
 
     return str(in_type)

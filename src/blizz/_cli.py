@@ -61,18 +61,20 @@ def bootstrap():
 @main.command()
 @click.argument("library_root", type=click.Path(exists=True, resolve_path=True))
 @click.option("-s", "--serve", is_flag=True)
-def docs(library_root, serve):
+@click.option("-p", "--port", type=int, default=8080)
+def docs(library_root, serve, port: int):
     """
     Create documentation.
     :param library_root:
     :param serve:
+    :param port:
     :return:
     """
     if serve:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir = Path(temp_dir)
             create_sphinx_html(source_dir=Path(library_root), target_dir=temp_dir)
-            serve_sphinx_html(temp_dir.joinpath("html"))
+            serve_sphinx_html(temp_dir.joinpath("html"), port)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 import blizz.apply
 import blizz.check
@@ -118,6 +119,7 @@ class TestApplyDedup1(Relation):
     AGE = Field(name="age", default=20)
 
     @classmethod
+    @blizz.check.keys
     @blizz.check.fields
     @blizz.apply.defaults
     @blizz.apply.deduplication
@@ -205,6 +207,30 @@ def test_apply_dedup_sort() -> None:
     assert TestApplyDedupSort.load().equals(
         pd.DataFrame(data={"name": ["Tom", "Mike"], "age": [5, 25]})
     )
+
+
+class TestApplyDedupFieldIsMissing(Relation):
+    """
+
+    """
+
+    NAME = Field(name="name")
+    AGE = Field(name="age")
+
+    @classmethod
+    @blizz.apply.deduplication(key=AGE, sort_order=blizz.apply.ASC)
+    def load(cls) -> pd.DataFrame:
+        return pd.DataFrame(data={"name": ["Tom", "Mike", "Mike"]})
+
+
+def test_apply_field_is_missing() -> None:
+    """
+    """
+
+    with pytest.raises(
+        expected_exception=ValueError, match="Cannot deduplicate based on.*"
+    ):
+        TestApplyDedupFieldIsMissing.load()
 
 
 class TestApplyRenameThroughField(Relation):

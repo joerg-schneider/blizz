@@ -1,6 +1,7 @@
 import functools
 import importlib
 import importlib.util
+import inspect
 import logging
 import os
 import re
@@ -94,3 +95,9 @@ def doublewrap(f):
             return lambda realf: f(realf, *args, **kwargs)
 
     return new_dec
+
+
+def is_blizz_field(in_obj: Any) -> bool:
+    if "blizz._primitives.Field.__" in str(type(in_obj)):
+        return True
+    return False

@@ -79,7 +79,7 @@ def _deduplicate(
             key = key_fields
     else:
         missing_fields = {
-            key_field.name for key_field in key if key_field not in r.get_fields()
+            key_field for key_field in key if key_field not in data.columns
         }
         if missing_fields:
             raise ValueError(
@@ -107,7 +107,6 @@ def _deduplicate(
             data = data_ranked.where(f"{row_ranked} = 1").drop(row_ranked)
         else:
             data = data.drop_duplicates(subset=key)
-        return data
 
     elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
@@ -119,9 +118,8 @@ def _deduplicate(
             data = data.sort_values(by=sort_on, ascending=sort_order == ASC)
 
         data = data.drop_duplicates(subset=key, keep="first")
-        return data
-
     logger.info(f"Applied deduplication to {r.name()}.")
+    return data
 
 
 def _fill_defaults(
@@ -155,14 +153,13 @@ def _fill_defaults(
     if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         data = data.fillna(fill)
-        return data
 
     elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
         data = data.fillna(fill)
-        return data
 
     logger.info(f"Applied default values to NAs in {r.name()}.")
+    return data
 
 
 @doublewrap
@@ -207,14 +204,12 @@ def _rename_fields(
         data: pyspark.sql.DataFrame = data
         for from_field_name, to_field_name in all_renames.items():
             data = data.withColumnRenamed(from_field_name, to_field_name)
-        return data
-
     elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
         data = data.rename(columns=all_renames)
-        return data
 
     logger.info(f"Applied the following field renames: {all_renames} to {r.name()}.")
+    return data
 
 
 @doublewrap
