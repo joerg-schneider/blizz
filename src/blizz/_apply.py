@@ -72,7 +72,7 @@ def _deduplicate(
     if key is None:
         key_fields = r.get_key_fields()
         if len(key_fields) == 0:
-            logger.info(f"No key fields defined – deduplicating based on all fields.")
+            logger.info("No key fields defined – deduplicating based on all fields.")
             key = r.get_fields()
         else:
             logger.info(f"Deduplicating based on: {key_fields}")
