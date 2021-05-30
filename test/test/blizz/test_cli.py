@@ -49,8 +49,9 @@ def test_docs():
             args=f"blizz docs {TEST_FEATURE_GROUP_DIR} --serve --port {test_port}",
             shell=True,
             cwd=PROJECT_HOME_DIR,
+            stdout=subprocess.PIPE
         )
-        sleep(3)
+        sleep(10)
         with request.urlopen(f"http://localhost:{test_port}", timeout=20) as req:
             assert req.status == 200
 
