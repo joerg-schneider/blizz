@@ -1,0 +1,40 @@
+trigger:
+- master
+- develop
+- feature/*
+- bugfix/*
+- release/*
+
+pool:
+  vmImage: 'ubuntu-16.04'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+
+- script: |
+    python -m pip install tox
+    tox --version
+  displayName: 'Install Tox'
+
+- script: |
+    tox -e lint
+  displayName: 'Tox Lint'
+
+- script: |
+    tox -e py38
+  displayName: 'Run Tox Python 3.8'
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFiles: '$(System.DefaultWorkingDirectory)/.tox/test-*.xml'
+    testRunTitle: 'Publish test results for Python $(python.version)'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/.tox/coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/.tox/htmlcov'
+
