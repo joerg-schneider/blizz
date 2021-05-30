@@ -2,7 +2,7 @@ blizz – _be blizzful_
 =====================
 **effortless Python table schema management**
 
-![PyPi Package](https://badge.fury.io/py/blizz.svg)
+![PyPi Package](https://badge.fury.io/py/blizz.svg) ![Build](https://img.shields.io/azure-devops/build/joerg4805/blizz/3) ![Coverage](https://img.shields.io/azure-devops/coverage/joerg4805/blizz/3?style=plastic)
 
 If you are looking for…
 
