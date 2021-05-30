@@ -1,7 +1,6 @@
 import functools
 import importlib
 import importlib.util
-import inspect
 import logging
 import os
 import re
