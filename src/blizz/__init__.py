@@ -7,12 +7,7 @@ import os as __os
 
 from ._bootstrapping import relation_from_dataframe
 from ._constants import ALL_FIELDS
-from ._feature_library import (
-    Feature,
-    FeatureGroup,
-    FeatureParameter,
-    AggregatedFeatureGroup,
-)
+
 from ._primitives import Relation, Field
 
 __version__ = "0.2.4"
@@ -28,7 +23,17 @@ __logging.basicConfig(
 # blizz needs either PySpark or pandas, check and raise if missing:
 try:
     import pyspark as __pyspark
+    from ._feature_library import (
+        Feature,
+        FeatureGroup,
+        FeatureParameter,
+        AggregatedFeatureGroup,
+    )
 except ImportError:  # pragma: no cover
+    Feature = None
+    FeatureGroup = None
+    FeatureParameter = None
+    AggregatedFeatureGroup = None
     __pyspark = None  # pragma: no cover
 
 try:
