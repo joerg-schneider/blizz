@@ -27,20 +27,23 @@ RAISE = "raise"
 def _field_existence(
     r: Type[Relation], data: Union["pyspark.sql.DataFrame", "pandas.DataFrame"]
 ):
+    missing_fields = set()
+
     if is_pyspark_df(data, r):
         data: pyspark.sql.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
-                raise ValueError(
-                    f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
-                )
+                missing_fields.add(t_column.name)
     elif is_pandas_df(data, r):
         data: pandas.DataFrame = data
         for t_column in r.get_fields():
             if t_column.name not in data.columns:
-                raise ValueError(
-                    f"Field '{t_column.name}' is not part of loaded Relation '{r.name()}'."
-                )
+                missing_fields.add(t_column.name)
+
+    if len(missing_fields) > 0:
+        raise ValueError(
+            f"Field(s) '{', '.join(missing_fields)}' not part of loaded Relation '{r.name()}'"
+        )
 
     logger.info(f"Relation {r.name()} has passed the field existance check.")
 

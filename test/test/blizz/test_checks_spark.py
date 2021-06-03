@@ -50,7 +50,7 @@ def test_field_existence_check() -> None:
 
     with pytest.raises(
         expected_exception=ValueError,
-        match="Field 'I'm missing' is not part of loaded Relation 'StudentPerformanceFaulty1'",
+        match="Field\(s\) 'I'm missing' not part of loaded Relation 'StudentPerformanceFaulty1'",
     ):
         StudentPerformanceFaulty1.load()
 
